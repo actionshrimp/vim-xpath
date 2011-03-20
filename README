@@ -1,0 +1,18 @@
+XPath Search plugin for vim.
+
+When editing a valid XML file, you can press SHIFT+X to enter XPath search mode.
+A new results window will pop up beneath the current window, with results matching your XPath appearing as you type.
+Hitting enter jumps to the results window, and then hitting enter on one of the results jumps to the line in your XML file that matched.
+
+Requires:
+-Vim with python support
+
+To install:
+-Place all files into your vimXX or .vim directory
+
+
+TODO:
+-Neaten up directory/configuration etc.
+-Create vimdocs
+-Make a vimball for easy installation
+-Write a post/create a video demo showing the plugin in action!

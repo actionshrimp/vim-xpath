@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<TagTests>
+	<TagStub/> 
+	<TagWithValue>Value</TagWithValue>
+	<TagWithAttributes att1="Attribute 1" att2="Attribute 2"/>
+	<TagWithAttributesWithSameText att1="Text" att2="Text"/>
+	<TagWithChildren>
+		<Child1 name="Dave"/>
+		<Child2 name="Rosy"/>
+		<Child3 name="Matt"/>
+	</TagWithChildren>
+</TagTests>
