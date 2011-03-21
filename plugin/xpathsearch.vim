@@ -4,7 +4,7 @@ execute "pyfile ".fnameescape(fnamemodify(s:scriptfile, ":h"). "/../xpathsearch/
 let s:xpathbuffer = -1
 let s:xpathtreebuffer = -1
 let s:xpathresultsbuffer = -1
-let s:xpathresultsbufferlinesize = 100
+let s:xpathresultsbufferlinesize = 104
 let s:lastxpath = ""
 let s:lastline = -1
 let s:resultsheadersize = -1
@@ -40,6 +40,7 @@ function! CreateXPathSplit()
 		exe 'file ' . l:bname
 		setlocal syntax=xpathsearch
 		nmap <buffer> <cr> :call XPathJumpToResult()<cr>
+		nmap <buffer> X :q<cr>
 		autocmd CursorMoved <buffer> :call XPathResultsCursorlineCheck()
 
 		py resultsheadersize = len(xpath.build_search_header(':-)')) + len(xpath.build_column_headers(xpath.default_column_widths))
@@ -92,7 +93,7 @@ EOF
 for i, result in enumerate(results):
 	bufout[i] = result
 
-for i in range(len(results), linesize):
+for i in range(len(results), linesize+1):
 	bufout[i] = whitespace
 EOF
 

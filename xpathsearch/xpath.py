@@ -36,17 +36,17 @@ class VimXPath(object):
 
 	def build_parse_error_message(self):
 		bufout = []
-		bufout.append('â€”â€”â€”â€”â€”')
+		bufout.append('—————')
 		bufout.append('XML Validation Error')
-		bufout.append('â€”â€”â€”â€”â€”')
+		bufout.append('—————')
 		bufout += self.parse_errors
 		return bufout
 
 	def build_search_header(self, xpath):
 		bufout = []
-		bufout.append('â€”â€”â€”â€”â€”')
+		bufout.append('—————')
 		bufout.append('Results: ' + xpath)
-		bufout.append('â€”â€”â€”â€”â€”')
+		bufout.append('—————')
 		return bufout
 
 	def evaluate_xpath(self, xpath):
@@ -62,9 +62,16 @@ class VimXPath(object):
 			header_row = self.build_column_headers(column_max)
 			bufout += header_row
 
-			for r in results:
-				result_row = self.build_result_row(column_max, r)
-				bufout += result_row
+			for i, r in enumerate(results):
+				if i < 99:
+					result_row = self.build_result_row(column_max, r)
+					bufout += result_row
+				elif i == 99:
+					result_row = ['More than 100 results, please narrow your XPATH...']
+					bufout += result_row
+				else:
+					pass
+
 
 		else:
 			bufout.append('No results.')
@@ -101,7 +108,7 @@ class VimXPath(object):
 			header_break.append(column_widths[prop])
 
 			output_list.append('|' + self.column_names[prop])
-			header_break.append('|' + 'â€”'*(column_widths[prop] - 1))
+			header_break.append('|' + '—'*(column_widths[prop] - 1))
 
 		headers = "%-*s %-*s %-*s" % tuple(output_list)
 		header_break = "%-*s %-*s %-*s" % tuple(header_break)
