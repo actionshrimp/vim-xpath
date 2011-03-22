@@ -1,5 +1,5 @@
 let s:scriptfile = expand("<sfile>")
-execute "pyfile ".fnameescape(fnamemodify(s:scriptfile, ":h"). "/../xpathsearch/xpath.py")
+execute "pyfile ".fnameescape(fnamemodify(s:scriptfile, ":h"). "/../xpath/xpath.py")
 
 let s:xpathbuffer = -1
 let s:xpathtreebuffer = -1
@@ -38,7 +38,7 @@ function! CreateXPathSplit()
 		below 10new
 		setlocal buftype=nofile bufhidden=hide noswapfile
 		exe 'file ' . l:bname
-		setlocal syntax=xpathsearch
+		setlocal syntax=xpath_results
 		nmap <buffer> <cr> :call XPathJumpToResult()<cr>
 		nmap <buffer> X :q<cr>
 		autocmd CursorMoved <buffer> :call XPathResultsCursorlineCheck()
