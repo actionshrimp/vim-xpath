@@ -8,4 +8,5 @@
 		<Child1 name="Dave"/>
 		<Child2 name="Rosy"/>
 	</TagWithChildren>
+	<FAKE/>
 </TagTests>
