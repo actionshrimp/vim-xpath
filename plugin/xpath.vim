@@ -32,7 +32,6 @@ function! XPathSearchPromptCompletion(lead, line, pos)
 
 endfunction
 
-"Refactored OK
 function! XPathSearch(xpath, search_buffer)
 
 	let l:search_window = bufwinnr(a:search_buffer)
@@ -46,7 +45,6 @@ function! XPathSearch(xpath, search_buffer)
 
 endfunction
 
-"Refactored OK
 function! XPathResultsSplit(search_buffer)
 
 	let l:not_loaded = -1
@@ -75,14 +73,12 @@ function! XPathResultsSplit(search_buffer)
 
 endfunction
 
-"Refactored OK
 function! CreateXPathResultsBuffer(results_buffer_name)
 	exe 'badd ' . a:results_buffer_name
 	let l:results_buffer = bufnr('^' . a:results_buffer_name . '$')
 	return l:results_buffer
 endfunction
 
-"Refactored OK
 function! CreateXPathResultsWindow(results_buffer)
 	below 10new
 	exe 'buffer ' . a:results_buffer
@@ -90,7 +86,6 @@ function! CreateXPathResultsWindow(results_buffer)
 	return l:results_window
 endfunction
 
-"Refactored OK
 function! SetupXPathResultsWindow(results_window, search_buffer)
 	exe a:results_window . 'wincmd w'
 
@@ -100,7 +95,6 @@ function! SetupXPathResultsWindow(results_window, search_buffer)
 	exe l:search_window . 'wincmd w'
 endfunction
 
-"Refactored OK
 function! SetupXPathResultsBuffer(search_buffer)
 	"These commands must be called when the 
 	"current window is the results window
@@ -113,7 +107,6 @@ function! SetupXPathResultsBuffer(search_buffer)
 	exe "nmap <buffer> <cr> :call XPathJumpToResult(" . a:search_buffer . ")<cr>"
 endfunction
 
-"Refactored OK
 function! XPathJumpToResult(search_buffer)
 
 	let l:current_line = getline('.')
@@ -132,7 +125,6 @@ function! XPathJumpToResult(search_buffer)
 
 endfunction
 
-"Refactored OK
 function! XPathResultsCursorlineCheck()
 
 	let l:syntax_under_cursor = synIDattr(synID(line("."), col("."), 1), "name")
