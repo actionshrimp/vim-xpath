@@ -147,13 +147,17 @@ class ResultsFormatter(object):
 				break
 
 		if results_contain_errors:
-			columns = [ReultsFormatterTableColumn('error', 'Parse Error', contract_contents=False)]
+			columns = [ResultsFormatterTableColumn('error', 'Parse Error', contract_contents=False, expand_target_pct=100)]
 		else:
-			columns = [
-				ResultsFormatterTableColumn('line', 'Line', contract_contents=False, expand_target_pct=5),
-				ResultsFormatterTableColumn('tag', 'Tag', expand_target_pct=25),
-				ResultsFormatterTableColumn('result', 'Result', expand_target_pct=70),
-				]
+			if len(results) == 0:
+				columns = [ResultsFormatterTableColumn('result', '', contract_contents=False, expand_target_pct=100)]
+				results = [XPathNoResultsResult()]
+			else:
+				columns = [
+					ResultsFormatterTableColumn('line', 'Line', contract_contents=False, expand_target_pct=5),
+					ResultsFormatterTableColumn('tag', 'Tag', expand_target_pct=25),
+					ResultsFormatterTableColumn('result', 'Result', expand_target_pct=70),
+					]
 
 		#Leave space for column delimiters
 		data_width = self.width - (len(columns) + 1)
@@ -244,7 +248,7 @@ class ResultsFormatterTable(object):
 		for col in self.columns:
 			for r in self.rows:
 				data = r.cells.get(col, 0)
-				col.max_data_width = max(col.max_data_width, len(data), len(col.title))
+				col.max_data_width = max(col.max_data_width, len(data))
 
 	def derive_column_visibility_from_row_contents(self):
 		for r in self.rows:
@@ -261,19 +265,22 @@ class ResultsFormatterTable(object):
 
 	def assign_space_for_non_contractable_columns(self):
 		for col in [c for c in self.columns if not(c.contract_contents)]:
-			col.width = col.max_data_width
+			col.width = max(col.max_data_width, len(col.title))
 
 	def calculate_free_space(self):
 		free_space = self.width - sum([c.width for c in self.columns if c.visible])
 		return free_space
 
 	def assign_free_space_to_columns_that_want_it(self, free_space):
-		while free_space > 0:
+		still_assigning = True
+		while free_space > 0 and still_assigning:
+			still_assigning = False
 			for col in self.columns:
 				if col.wants_more_space(self.width):
 					if free_space > 0:
 						col.width += 1
 						free_space -= 1
+						still_assigning = True
 			
 class ResultsFormatterTableColumn(object):
 	def __init__(self, name, title, contract_contents=True, expand_target_pct=0):
@@ -329,6 +336,10 @@ class XPathResult(object):
 class XPathParseErrorResult(XPathResult):
 	def __init__(self, error):
 		self.error = error
+
+class XPathNoResultsResult(XPathResult):
+	def __init__(self):
+		self.result = 'No results found.'
 
 class XPathNodeResult(XPathResult):
 	def build_line(self, el):
