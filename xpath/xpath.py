@@ -25,7 +25,7 @@ class VimXPathInterface(object):
 	def get_search_results(self, search_buffer_name, xpath):
 		search_buffer = self.buffer_manager.get_buffer(search_buffer_name)
 		search_text = self.buffer_manager.get_buffer_content(search_buffer)
-		results = self.searcher.search(search_text, xpath)
+		results = self.searcher.build_tree_and_search(search_text, xpath)
 		return results
 
 	def output_results(self, xpath, results):
@@ -89,17 +89,28 @@ class XPathSearcher(object):
 
 		self.cache = {'xml': None, 'tree': None, 'eval': None, 'error': None}
 
-	def search(self, xml, xpath):
+	def build_tree_and_search(self, xml, xpath):
 
 		self.build_xml_tree(xml)
 
 		if self.cache['error'] is None:
-			raw_results = self.cache['eval'](xpath)
-			results = self.parse_results(raw_results)
+			results = self.search(xpath)
 		else:
 			results = [self.cache['error']]
 
 		return results
+
+	def search(self, xpath):
+		try:
+			raw_results = self.cache['eval'](xpath)
+			results = self.parse_results(raw_results)
+
+		except etree.XPathEvalError as xpatherr:
+			err_text = str(xpatherr)
+			results = [XPathSearchErrorResult(err_text)]
+
+		return results
+
 
 	def build_xml_tree(self, xml):
 		if self.cache['xml'] != xml:
@@ -146,12 +157,16 @@ class ResultsFormatter(object):
 		results_contain_errors = False
 
 		for r in results:
-			if isinstance(r, XPathParseErrorResult):
+			if isinstance(r, XPathErrorResult):
 				results_contain_errors = True
 				break
 
 		if results_contain_errors:
-			columns = [ResultsFormatterTableColumn('error', 'Parse Error', contract_contents=False, expand_target_pct=100)]
+			columns = [
+					ResultsFormatterTableColumn('line', 'Line', contract_contents=False, expand_target_pct=5),
+					ResultsFormatterTableColumn('column', 'Column', contract_contents=False, expand_target_pct=5),
+					ResultsFormatterTableColumn('error', 'Error', contract_contents=False, expand_target_pct=95)
+					]
 		else:
 			if len(results) == 0:
 				columns = [ResultsFormatterTableColumn('result', '', contract_contents=False, expand_target_pct=100)]
@@ -205,7 +220,7 @@ class ResultsFormatter(object):
 		for r in self.table.rows:
 			line = '┃'
 			for c in self.table.columns:
-				contents = r.cells[c]
+				contents = r.cells.get(c, "")
 				if len(contents) > c.width:
 					contents = contents[:c.width-3] + '...'
 				else:
@@ -251,7 +266,7 @@ class ResultsFormatterTable(object):
 	def calculate_column_data_widths(self):
 		for col in self.columns:
 			for r in self.rows:
-				data = r.cells.get(col, 0)
+				data = r.cells.get(col, "")
 				col.max_data_width = max(col.max_data_width, len(data))
 
 	def derive_column_visibility_from_row_contents(self):
@@ -323,6 +338,36 @@ class ResultsFormatterTableRow(object):
 
 
 class XPathResult(object):
+	pass
+
+class XPathErrorResult(XPathResult):
+	pass
+
+class XPathParseErrorResult(XPathErrorResult):
+	def __init__(self, error):
+		self.error = error
+		self.set_error_position(error)
+
+	def set_error_position(self, error):
+		self.line = self.first_group_match('line (\d*)', error)
+		self.column = self.first_group_match('column (\d*)', error)
+
+	def first_group_match(self, pattern, text):
+		search = re.search(pattern, text)
+		groups = search.groups()
+		return groups[0]
+
+class XPathSearchErrorResult(XPathErrorResult):
+	def __init__(self, error):
+		self.error = 'Error with XPath: ' + error
+		self.line = '-'
+		self.column = '-'
+
+class XPathNoResultsResult(XPathResult):
+	def __init__(self):
+		self.result = 'No results found.'
+
+class XPathValidResult(XPathResult):
 	def __init__(self, el):
 		self.line = self.build_line(el)
 		self.tag = self.build_tag(el)
@@ -337,15 +382,7 @@ class XPathResult(object):
 	def build_result(self, el):
 		pass
 
-class XPathParseErrorResult(XPathResult):
-	def __init__(self, error):
-		self.error = error
-
-class XPathNoResultsResult(XPathResult):
-	def __init__(self):
-		self.result = 'No results found.'
-
-class XPathNodeResult(XPathResult):
+class XPathNodeResult(XPathValidResult):
 	def build_line(self, el):
 		return el.sourceline
 
@@ -367,7 +404,7 @@ class XPathTagResult(XPathNodeResult):
 		else:
 			return text
 
-class XPathStringResult(XPathResult):
+class XPathStringResult(XPathValidResult):
 	def build_line(self, el):
 		parent = el.getparent()
 		return parent.sourceline
