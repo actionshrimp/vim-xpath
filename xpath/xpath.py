@@ -1,6 +1,11 @@
 #-*- encoding:utf-8 -*-
 import re
-from lxml import etree
+
+try:
+	from lxml import etree
+	LXML_IMPORTED = 1
+except ImportError:
+	LXML_IMPORTED = 0
 
 class VimXPathInterface(object):
 
@@ -12,7 +17,7 @@ class VimXPathInterface(object):
 
 	def build_buffer_manager(self, vim, result_buffer_name):
 		buffer_manager = VimBufferManager(vim)
-		buffer_manager.define_buffer("results", results_buffer_name)
+		buffer_manager.define_buffer('results', results_buffer_name)
 		return buffer_manager
 
 	def xpath_search(self, search_buffer_name, xpath):
@@ -51,7 +56,7 @@ class VimXPathInterface(object):
 		self.searcher.build_tree(search_text)
 
 	def output_results(self, xpath, results):
-		results_buffer = self.buffer_manager.get_defined_buffer("results")
+		results_buffer = self.buffer_manager.get_defined_buffer('results')
 		results_window = self.buffer_manager.get_window(results_buffer)
 
 		width = results_window.width
@@ -94,7 +99,7 @@ class VimBufferManager(object):
 		del buffer[0]
 
 	def get_buffer_content(self, buffer):
-		content = "\n".join(buffer)
+		content = '\n'.join(buffer)
 		return content
 
 	def get_window(self, buffer):
@@ -142,7 +147,7 @@ class XPathSearcher(object):
 
 		split = xpath.split('|')
 
-		results_base = "|".join(split[:-1])
+		results_base = '|'.join(split[:-1])
 		if len(split) > 1:
 			results_base += '|'
 
@@ -150,7 +155,7 @@ class XPathSearcher(object):
 
 		partition = completion_seed.rpartition('/')
 
-		xpath_base = "".join(partition[:-1])
+		xpath_base = ''.join(partition[:-1])
 		results_base += xpath_base
 
 		search_name = partition[-1]
@@ -246,7 +251,7 @@ class ResultsFormatter(object):
 		lines = ['┣', '┃', '┣']
 		for c in self.table.columns:
 			lines[0] += '━' * c.width + '┳'
-			lines[1] += c.title + " "*(c.width - len(c.title)) + '┃'
+			lines[1] += c.title + ' '*(c.width - len(c.title)) + '┃'
 			lines[2] += '━' * c.width + '╋'
 
 		lines[0] = lines[0][:-len('┳')] + '┫'
@@ -262,11 +267,11 @@ class ResultsFormatter(object):
 		for r in self.table.rows:
 			line = '┃'
 			for c in self.table.columns:
-				contents = r.cells.get(c, "")
+				contents = r.cells.get(c, '')
 				if len(contents) > c.width:
 					contents = contents[:c.width-3] + '...'
 				else:
-					contents += " "*(c.width - len(contents))
+					contents += ' '*(c.width - len(contents))
 
 				line += contents + '┃'
 
@@ -307,7 +312,7 @@ class ResultsFormatterTable(object):
 	def calculate_column_data_widths(self):
 		for col in self.columns:
 			for r in self.rows:
-				data = r.cells.get(col, "")
+				data = r.cells.get(col, '')
 				col.max_data_width = max(col.max_data_width, len(data))
 
 	def fit_columns_based_on_column_settings(self):
@@ -367,7 +372,7 @@ class ResultsFormatterTableRow(object):
 			try:
 				cell = result.__getattribute__(c.name)
 				if cell is None:
-					self.cells[c] = ""
+					self.cells[c] = ''
 				else:
 					self.cells[c] = str(cell)
 			except AttributeError as inst:
@@ -450,14 +455,14 @@ class XPathNodeResult(XPathValidResult):
 
 class XPathTagResult(XPathNodeResult):
 	def build_result(self, el):
-		text = ""
+		text = ''
 		if el.text is not None:
 			text = el.text
 
-		if re.sub("\s", "", text) == "":
-			attrib_string = ""
+		if re.sub('\s', '', text) == '':
+			attrib_string = ''
 			for a in el.attrib.keys():
-				attrib_string += "@" + a + ": \"" + el.attrib[a] + "\" "
+				attrib_string += '@' + a + ': "' + el.attrib[a] + '" '
 			
 			return attrib_string
 		else:
@@ -474,7 +479,12 @@ class XPathStringResult(XPathValidResult):
 
 class XPathAttrResult(XPathStringResult):
 	def build_xmlattr(self, el):
-		return '@' + el.attrname
+		try:
+			xmlattr = '@' + el.attrname
+		except AttributeError:
+			xmlattr = None
+
+		return xmlattr
 
 	def build_result(self, el):
 		return str(el)
