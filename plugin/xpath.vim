@@ -19,6 +19,7 @@ function! XPathSearchPrompt()
 
 	if l:xpath != ""
 		call XPathSearch(l:xpath, s:search_buffer)
+		call JumpToFirstXPathResult()
 	endif
 
 endfunction
@@ -42,6 +43,16 @@ function! XPathSearch(xpath, search_buffer)
 	py search_buffer_name = vim.eval("bufname('%')")
 
 	py xpath_interface.xpath_search(search_buffer_name, xpath)
+
+endfunction
+
+function! JumpToFirstXPathResult()
+
+	let l:results_buffer = bufnr('^' . s:results_buffer_name . '$')
+	let l:search_window = bufwinnr(l:results_buffer)
+	exe l:search_window . 'wincmd w'
+
+	call search(s:result_pattern)
 
 endfunction
 
