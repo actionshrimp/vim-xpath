@@ -87,27 +87,31 @@ class XPathSearcher(object):
 		self.cached_search_text = None
 		self.xml_tree = None
 
-		self.cache = {'xml': None, 'tree': None, 'eval': None}
+		self.cache = {'xml': None, 'tree': None, 'eval': None, 'error': None}
 
 	def search(self, xml, xpath):
-		try:
-			self.build_xml_tree(xml)
-	
-		except etree.XMLSyntaxError as xmlerr:
-			err_text = str(xmlerr)
-			error_result = XPathParseErrorResult(err_text)
-			return [error_result]
 
-		raw_results = self.cache['eval'](xpath)
-		final_results = self.parse_results(raw_results)
+		self.build_xml_tree(xml)
 
-		return final_results
+		if self.cache['error'] is None:
+			raw_results = self.cache['eval'](xpath)
+			results = self.parse_results(raw_results)
+		else:
+			results = [self.cache['error']]
+
+		return results
 
 	def build_xml_tree(self, xml):
 		if self.cache['xml'] != xml:
 			self.cache['xml'] = xml
-			self.cache['tree'] = etree.XML(xml)
-			self.cache['eval'] = etree.XPathEvaluator(self.cache['tree'])
+			try:
+				self.cache['tree'] = etree.XML(xml)
+				self.cache['eval'] = etree.XPathEvaluator(self.cache['tree'])
+				self.cache['error'] = None
+
+			except etree.XMLSyntaxError as xmlerr:
+				err_text = str(xmlerr)
+				self.cache['error'] = XPathParseErrorResult(err_text)
 
 	def parse_results(self, raw_results):
 		results = []
