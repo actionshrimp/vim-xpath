@@ -123,7 +123,7 @@ function! SetupXPathResultsBuffer(search_buffer)
 	autocmd CursorMoved <buffer> :call XPathResultsCursorlineCheck()
 	autocmd VimResized <buffer> :py xpath_interface.window_resized()
 
-	exe "nmap <buffer> <cr> :call XPathJumpToResult(" . a:search_buffer . ")<cr>"
+	exe "nmap <buffer> <silent> <cr> :call XPathJumpToResult(" . a:search_buffer . ")<cr>"
 endfunction
 
 function! XPathJumpToResult(search_buffer)
