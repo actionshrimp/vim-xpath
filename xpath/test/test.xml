@@ -5,8 +5,12 @@
 	<TagWithAttributes att1="Attribute 1" att2="Attribute 2"/>
 	<TagWithAttributesWithSameText att1="Text" att2="Text"/>
 	<TagWithChildren>
-		<Child1 name="Dave"/>
-		<Child2 name="Rosy"/>
+		<Child name="Dave">
+			<Child name="Matt"/>
+			<Child name="Cheese"/>
+		</Child>
+		<Child name="Rosy"/>
+		<Child name="Simon"/>
 	</TagWithChildren>
 	<FAKE/>
 </TagTests>
