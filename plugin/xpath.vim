@@ -130,6 +130,7 @@ function! XPathJumpToResult(search_buffer)
 		exe l:search_window . 'wincmd w'
 
 		exe l:result_line
+		normal zv
 
 	catch /E684:/
 	endtry
