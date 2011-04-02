@@ -12,9 +12,10 @@ nnoremap X :call XPathSearchPrompt()<cr>
 function! XPathSearchPrompt()
 
 	let s:search_buffer = bufnr('%')
+	call XPathResultsSplit(s:search_buffer)
 
 	call inputsave()
-	let l:xpath = input("XPath:", "", "custom,XPathSearchPromptCompletion")
+	let l:xpath = input("XPath: ", "//", "customlist,XPathSearchPromptCompletion")
 	call inputrestore()
 
 	if l:xpath != ""
@@ -26,10 +27,17 @@ endfunction
 
 function! XPathSearchPromptCompletion(lead, line, pos)
 
-	call XPathSearch(a:line, s:search_buffer)
+
+	"call XPathSearch(a:line, s:search_buffer)
+	py xpath = vim.eval("a:line")
+	py search_buffer_name = vim.eval("bufname('%')")
+	py completions = xpath_interface.get_completions(search_buffer_name, xpath)
+
+	py vim.command("let l:complist = " + str(completions))
+
 	redraw
 
-	return
+	return l:complist
 
 endfunction
 

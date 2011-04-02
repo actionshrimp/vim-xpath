@@ -23,10 +23,32 @@ class VimXPathInterface(object):
 		self.previous['search_buffer_name'] = search_buffer_name
 
 	def get_search_results(self, search_buffer_name, xpath):
-		search_buffer = self.buffer_manager.get_buffer(search_buffer_name)
-		search_text = self.buffer_manager.get_buffer_content(search_buffer)
-		results = self.searcher.build_tree_and_search(search_text, xpath)
+		self.prep_searcher(search_buffer_name)
+		results = self.searcher.search(xpath)
+
 		return results
+
+	def get_completions(self, search_buffer_name, xpath):
+		results = self.get_completion_search_results(search_buffer_name, xpath)
+
+		formatter = CompletionFormatter(results)
+		results_list = formatter.get_formatted_list()
+		results_set = list(set(results_list))
+		results_set.sort()
+
+		return results_set
+
+	def get_completion_search_results(self, search_buffer_name, xpath):
+		self.prep_searcher(search_buffer_name)
+		results = self.searcher.completion_search(xpath)
+
+		return results
+
+	def prep_searcher(self, search_buffer_name):
+		search_buffer = self.buffer_manager.get_buffer(search_buffer_name)
+
+		search_text = self.buffer_manager.get_buffer_content(search_buffer)
+		self.searcher.build_tree(search_text)
 
 	def output_results(self, xpath, results):
 		results_buffer = self.buffer_manager.get_defined_buffer("results")
@@ -37,6 +59,7 @@ class VimXPathInterface(object):
 		lines = formatter.get_formatted_lines()
 
 		self.buffer_manager.set_buffer_content(results_buffer, lines)
+
 
 	def window_resized(self):
 		if self.previous['xpath'] is not None:
@@ -89,30 +112,7 @@ class XPathSearcher(object):
 
 		self.cache = {'xml': None, 'tree': None, 'eval': None, 'error': None}
 
-	def build_tree_and_search(self, xml, xpath):
-
-		self.build_xml_tree(xml)
-
-		if self.cache['error'] is None:
-			results = self.search(xpath)
-		else:
-			results = [self.cache['error']]
-
-		return results
-
-	def search(self, xpath):
-		try:
-			raw_results = self.cache['eval'](xpath)
-			results = self.parse_results(raw_results)
-
-		except etree.XPathEvalError as xpatherr:
-			err_text = str(xpatherr)
-			results = [XPathSearchErrorResult(err_text)]
-
-		return results
-
-
-	def build_xml_tree(self, xml):
+	def build_tree(self, xml):
 		if self.cache['xml'] != xml:
 			self.cache['xml'] = xml
 			try:
@@ -123,6 +123,47 @@ class XPathSearcher(object):
 			except etree.XMLSyntaxError as xmlerr:
 				err_text = str(xmlerr)
 				self.cache['error'] = XPathParseErrorResult(err_text)
+
+	def search(self, xpath):
+		if self.cache['error'] is None:
+			try:
+				raw_results = self.cache['eval'](xpath)
+				results = self.parse_results(raw_results)
+
+			except etree.XPathError as xpatherr:
+				err_text = str(xpatherr)
+				results = [XPathSearchErrorResult(err_text, xpath)]
+		else:
+			results = [self.cache['error']]
+
+		return results
+
+	def completion_search(self, xpath):
+
+		split = xpath.split('|')
+
+		results_base = "|".join(split[:-1])
+		if len(split) > 1:
+			results_base += '|'
+
+		completion_seed = split[-1]
+
+		partition = completion_seed.rpartition('/')
+
+		xpath_base = "".join(partition[:-1])
+		results_base += xpath_base
+
+		search_name = partition[-1]
+		if search_name.startswith('@'):
+			xpath_type_base  = '@'
+			search_name = search_name[1:]
+		else:
+			xpath_type_base = ''
+
+		xpath_expr = xpath_base + xpath_type_base + "*[starts-with(name(), '" + search_name + "')]"
+		results = self.search(xpath_expr)
+
+		return {'base': results_base, 'results': results}
 
 	def parse_results(self, raw_results):
 		results = []
@@ -174,8 +215,9 @@ class ResultsFormatter(object):
 			else:
 				columns = [
 					ResultsFormatterTableColumn('line', 'Line', contract_contents=False, expand_target_pct=5),
-					ResultsFormatterTableColumn('tag', 'Tag', expand_target_pct=25),
-					ResultsFormatterTableColumn('result', 'Result', expand_target_pct=70),
+					ResultsFormatterTableColumn('tag', 'Tag', expand_target_pct=15),
+					ResultsFormatterTableColumn('xmlattr', 'Attribute', expand_target_pct=10),
+					ResultsFormatterTableColumn('result', 'Result', expand_target_pct=70)
 					]
 
 		#Leave space for column delimiters
@@ -260,8 +302,7 @@ class ResultsFormatterTable(object):
 
 	def build(self):
 		self.calculate_column_data_widths()
-		self.derive_column_visibility_from_row_contents()
-		self.fit_visible_columns_based_on_column_settings()
+		self.fit_columns_based_on_column_settings()
 
 	def calculate_column_data_widths(self):
 		for col in self.columns:
@@ -269,13 +310,7 @@ class ResultsFormatterTable(object):
 				data = r.cells.get(col, "")
 				col.max_data_width = max(col.max_data_width, len(data))
 
-	def derive_column_visibility_from_row_contents(self):
-		for r in self.rows:
-			for column in r.cells.keys():
-				if not(column.visible):
-					column.visible = True
-
-	def fit_visible_columns_based_on_column_settings(self):
+	def fit_columns_based_on_column_settings(self):
 
 		self.assign_space_for_non_contractable_columns()
 
@@ -287,7 +322,7 @@ class ResultsFormatterTable(object):
 			col.width = max(col.max_data_width, len(col.title))
 
 	def calculate_free_space(self):
-		free_space = self.width - sum([c.width for c in self.columns if c.visible])
+		free_space = self.width - sum([c.width for c in self.columns])
 		return free_space
 
 	def assign_free_space_to_columns_that_want_it(self, free_space):
@@ -305,7 +340,6 @@ class ResultsFormatterTableColumn(object):
 	def __init__(self, name, title, contract_contents=True, expand_target_pct=0):
 		self.name = name
 		self.title = title
-		self.visible = False
 
 		self.width = 0
 		self.max_data_width = 0
@@ -319,7 +353,7 @@ class ResultsFormatterTableColumn(object):
 	def wants_more_space(self, table_width):
 		data_is_larger = (self.width < self.max_data_width)
 		desired_pct_is_larger = (self.current_percentage_width(table_width) < self.expand_target_pct)
-		if (self.visible and (data_is_larger or desired_pct_is_larger)):
+		if (data_is_larger or desired_pct_is_larger):
 			return True
 		else:
 			return False
@@ -332,10 +366,31 @@ class ResultsFormatterTableRow(object):
 		for c in columns:
 			try:
 				cell = result.__getattribute__(c.name)
-				self.cells[c] = str(cell)
+				if cell is None:
+					self.cells[c] = ""
+				else:
+					self.cells[c] = str(cell)
 			except AttributeError as inst:
 				pass
 
+class CompletionFormatter(object):
+	def __init__(self, results):
+		self.base = results['base']
+		self.results = results['results']
+
+	def get_formatted_list(self):
+		valid_results = [r for r in self.results if isinstance(r, XPathValidResult)]
+		formatted_list = []
+
+		for r in valid_results:
+
+			formatted = r.tag
+			if isinstance(r, XPathAttrResult):
+				formatted = r.xmlattr
+
+			formatted_list.append(self.base + formatted)
+
+		return formatted_list
 
 class XPathResult(object):
 	pass
@@ -358,8 +413,8 @@ class XPathParseErrorResult(XPathErrorResult):
 		return groups[0]
 
 class XPathSearchErrorResult(XPathErrorResult):
-	def __init__(self, error):
-		self.error = 'Error with XPath: ' + error
+	def __init__(self, error, xpath):
+		self.error = 'Error with XPath (' + xpath + '): ' + error
 		self.line = '-'
 		self.column = '-'
 
@@ -371,12 +426,16 @@ class XPathValidResult(XPathResult):
 	def __init__(self, el):
 		self.line = self.build_line(el)
 		self.tag = self.build_tag(el)
+		self.xmlattr = self.build_xmlattr(el)
 		self.result = self.build_result(el)
 
 	def build_line(self, el):
 		pass
 
 	def build_tag(self, el):
+		pass
+
+	def build_xmlattr(self, el):
 		pass
 
 	def build_result(self, el):
@@ -402,7 +461,7 @@ class XPathTagResult(XPathNodeResult):
 			
 			return attrib_string
 		else:
-			return text
+			return el.text
 
 class XPathStringResult(XPathValidResult):
 	def build_line(self, el):
@@ -414,6 +473,9 @@ class XPathStringResult(XPathValidResult):
 		return parent.tag
 
 class XPathAttrResult(XPathStringResult):
+	def build_xmlattr(self, el):
+		return '@' + el.attrname
+
 	def build_result(self, el):
-		return '@' + el.attrname + ': ' + str(el)
+		return str(el)
 
