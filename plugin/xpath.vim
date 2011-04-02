@@ -119,7 +119,7 @@ function! SetupXPathResultsBuffer(search_buffer)
 	"current window is the results window
 	setlocal buftype=nofile bufhidden=hide noswapfile syntax=xpathresults nowrap
 
-	nmap <buffer> X :q<cr>
+	nmap <buffer> <silent> X :q<cr>
 	autocmd CursorMoved <buffer> :call XPathResultsCursorlineCheck()
 	autocmd VimResized <buffer> :py xpath_interface.window_resized()
 
