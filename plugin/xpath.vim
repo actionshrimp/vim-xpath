@@ -1,4 +1,6 @@
-if has("python")
+if !(has("python"))
+	echo "XPath plugin not loaded due to no python support."
+else
 
 	let s:scriptfile = expand("<sfile>")
 	execute "pyfile ".fnameescape(fnamemodify(s:scriptfile, ":h"). "/../xpath/xpath.py")
@@ -158,6 +160,4 @@ if has("python")
 		endif
 	endfunction
 
-else
-	echo "XPath plugin not loaded due to no python support."
 endif
