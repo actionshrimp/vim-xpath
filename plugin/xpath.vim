@@ -1,3 +1,5 @@
+let g:xpath_search_filetypes = ['xml', 'xslt']
+
 echohl Error
 if !(has("python"))
 	echo "XPath plugin not loaded due to no python support."
@@ -18,7 +20,15 @@ else
 		let s:results_buffer_name = 'xpath_search_results'
 		let s:result_pattern = '^┃\(\d\+\).*$'
 
-		nnoremap X :call XPathSearchPrompt()<cr>
+		autocmd FileType * :call XPathFileType(expand("<amatch>"))
+
+		function! XPathFileType(bufft)
+			for ft in g:xpath_search_filetypes
+				if (a:bufft == ft)
+					nnoremap <buffer> X :call XPathSearchPrompt()<cr>
+				end
+			endfor
+		endfunction
 
 		function! XPathSearchPrompt()
 
