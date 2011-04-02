@@ -9,11 +9,10 @@ Requires:
 -python lxml library installed (ideally 2.7 or higher)
 
 To install:
--Place all files into your vimXX or .vim directory
+-Place all files into your vimXX or .vim directory, or source the vimball (see :help vimball)
+-Load the vimdoc with :helptags <path-to-your-vim-dir>/doc
 
 
 TODO:
--Neaten up configuration etc.
--Create vimdocs
 -Make a vimball for easy installation
 -Write a post/create a video demo showing the plugin in action!
