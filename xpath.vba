@@ -221,7 +221,7 @@ endfunction
 function! SetupXPathResultsBuffer(search_buffer)
 	"These commands must be called when the 
 	"current window is the results window
-	setlocal buftype=nofile bufhidden=hide noswapfile syntax=xpathresults nowrap
+	setlocal buftype=nofile bufhidden=hide noswapfile syntax=xpathresults nowrap wfh
 
 	nmap <buffer> <silent> X :q<cr>
 	autocmd CursorMoved <buffer> :call XPathResultsCursorlineCheck()

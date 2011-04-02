@@ -1,0 +1,4 @@
+doc/xpath.txt
+plugin/xpath.vim
+syntax/xpathresults.vim
+xpath/xpath.py

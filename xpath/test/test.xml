@@ -7,10 +7,11 @@
 	<TagWithChildren>
 		<Child name="Dave">
 			<Child name="Matt"/>
-			<Child name="Cheese"/>
+			<Child name="Paul"/>
 		</Child>
 		<Child name="Rosy"/>
 		<Child name="Simon"/>
+		<OtherChild name="Sarah"/>
 	</TagWithChildren>
 	<FAKE/>
 </TagTests>
