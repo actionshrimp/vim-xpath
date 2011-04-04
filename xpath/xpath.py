@@ -194,6 +194,18 @@ class XPathSearcher(object):
 
 		return result
 
+class TBL(object):
+#	TL = '┏'; TC = '┳'; TR = '┓'; T = '━'
+#	HL = '┣'; HC = '╋'; HR = '┫'; H = '━'
+#	ML = '┃'; MC = '┃'; MR = '┃'; M = '━'
+#	BL = '┗'; BC = '┻'; BR = '┛'; B = '━'
+
+	TL = '+'; TC = '+'; TR = '+'; T = '-'
+	HL = '+'; HC = '+'; HR = '+'; H = '-'
+	ML = '|'; MC = '|'; MR = '|'; M = '-'
+	BL = '+'; BC = '+'; BR = '+'; B = '-'
+
+
 class ResultsFormatter(object):
 
 	def __init__(self, window_width, xpath, results):
@@ -246,19 +258,19 @@ class ResultsFormatter(object):
 	def build_header(self):
 		header_lines = []
 		
-		header_lines.append('┏' + '━'* (self.width-2) + '┓')
+		header_lines.append(TBL.TL + TBL.T* (self.width-2) + TBL.TR)
 
 		header_text = 'Results: ' + self.xpath_string
-		header_lines.append('┃' + header_text + ' ' * (self.width - len(header_text) - 2) + '┃')
+		header_lines.append(TBL.ML + header_text + ' ' * (self.width - len(header_text) - 2) + TBL.MR)
 
-		lines = ['┣', '┃', '┣']
+		lines = [TBL.HL, TBL.ML, TBL.HL]
 		for c in self.table.columns:
-			lines[0] += '━' * c.width + '┳'
-			lines[1] += c.title + ' '*(c.width - len(c.title)) + '┃'
-			lines[2] += '━' * c.width + '╋'
+			lines[0] += TBL.T * c.width + TBL.TC
+			lines[1] += c.title + ' '*(c.width - len(c.title)) + TBL.MC
+			lines[2] += TBL.H * c.width + TBL.HC
 
-		lines[0] = lines[0][:-len('┳')] + '┫'
-		lines[2] = lines[2][:-len('┃')] + '┫'
+		lines[0] = lines[0][:-len(TBL.TC)] + TBL.HR
+		lines[2] = lines[2][:-len(TBL.HC)] + TBL.HR
 
 		header_lines += lines
 
@@ -268,7 +280,7 @@ class ResultsFormatter(object):
 		body_lines = []
 
 		for r in self.table.rows:
-			line = '┃'
+			line = TBL.ML
 			for c in self.table.columns:
 				contents = r.cells.get(c, '')
 				if len(contents) > c.width:
@@ -276,7 +288,7 @@ class ResultsFormatter(object):
 				else:
 					contents += ' '*(c.width - len(contents))
 
-				line += contents + '┃'
+				line += contents + TBL.MC
 
 			body_lines.append(line)
 
@@ -284,11 +296,11 @@ class ResultsFormatter(object):
 
 	def build_footer(self):
 		footer_lines = []
-		line = '┗'
+		line = TBL.BL
 		for c in self.table.columns:
-			line += '━' * c.width + '┻'
+			line += TBL.B * c.width + TBL.BC
 
-		line = line[:-len('┻')] + '┛'
+		line = line[:-len(TBL.BC)] + TBL.BR
 
 		footer_lines.append(line)
 		return footer_lines
@@ -423,8 +435,8 @@ class XPathParseErrorResult(XPathErrorResult):
 class XPathSearchErrorResult(XPathErrorResult):
 	def __init__(self, error, xpath):
 		self.error = 'Error with XPath (' + xpath + '): ' + error
-		self.line = '-'
-		self.column = '-'
+		self.line = '*'
+		self.column = '*'
 
 class XPathNoResultsResult(XPathResult):
 	def __init__(self):
