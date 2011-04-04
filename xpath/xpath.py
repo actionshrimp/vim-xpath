@@ -50,10 +50,11 @@ class VimXPathInterface(object):
 		return results
 
 	def prep_searcher(self, search_buffer_name):
-		search_buffer = self.buffer_manager.get_buffer(search_buffer_name)
+		if search_buffer_name != self.buffer_manager.get_defined_buffer('results'):
+			search_buffer = self.buffer_manager.get_buffer(search_buffer_name)
 
-		search_text = self.buffer_manager.get_buffer_content(search_buffer)
-		self.searcher.build_tree(search_text)
+			search_text = self.buffer_manager.get_buffer_content(search_buffer)
+			self.searcher.build_tree(search_text)
 
 	def output_results(self, xpath, results):
 		results_buffer = self.buffer_manager.get_defined_buffer('results')
@@ -125,7 +126,7 @@ class XPathSearcher(object):
 				self.cache['eval'] = etree.XPathEvaluator(self.cache['tree'])
 				self.cache['error'] = None
 
-			except etree.XMLSyntaxError as xmlerr:
+			except Exception as xmlerr:
 				err_text = str(xmlerr)
 				self.cache['error'] = XPathParseErrorResult(err_text)
 
@@ -135,7 +136,7 @@ class XPathSearcher(object):
 				raw_results = self.cache['eval'](xpath)
 				results = self.parse_results(raw_results)
 
-			except etree.XPathError as xpatherr:
+			except Exception as xpatherr:
 				err_text = str(xpatherr)
 				results = [XPathSearchErrorResult(err_text, xpath)]
 		else:
@@ -238,6 +239,8 @@ class ResultsFormatter(object):
 		lines += self.build_body()
 		lines += self.build_footer()
 
+		lines = [x.replace("\n", " ") for x in lines]
+
 		return lines
 
 	def build_header(self):
@@ -257,7 +260,7 @@ class ResultsFormatter(object):
 		lines[0] = lines[0][:-len('┳')] + '┫'
 		lines[2] = lines[2][:-len('┃')] + '┫'
 
-		header_lines.append(lines)
+		header_lines += lines
 
 		return header_lines
 
