@@ -50,7 +50,7 @@ class VimXPathInterface(object):
 		return results
 
 	def prep_searcher(self, search_buffer_name):
-		if search_buffer_name != self.buffer_manager.get_defined_buffer('results'):
+		if search_buffer_name != self.buffer_manager.defined_buffers['results']:
 			search_buffer = self.buffer_manager.get_buffer(search_buffer_name)
 
 			search_text = self.buffer_manager.get_buffer_content(search_buffer)
@@ -85,9 +85,11 @@ class VimBufferManager(object):
 		return self.get_buffer(buffer_name)
 
 	def get_buffer(self, buffer_name):
+		if buffer_name is None:
+			return self.vim.current.buffer
 
 		for buf in [b for b in self.vim.buffers if b.name is not None] :
-			if buf.name.endswith(buffer_name) and buf:
+			if buf.name.endswith(buffer_name):
 				return buf
 
 		return None

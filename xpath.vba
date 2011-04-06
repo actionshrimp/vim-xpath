@@ -69,7 +69,7 @@ let g:xpath_search_filetypes += ['htm', 'html']
 To display the filetype for a file you currently have open in order to set up 
 a new match, you can use the command :set filetype.
 plugin/xpath.vim	[[[1
-189
+190
 "Vim global plugin for XPATH search
 "Last Change:	2011 Apr 02
 "Maintainer:	Dave Aitken <dave.aitken@gmail.com>
@@ -131,8 +131,6 @@ endfunction
 
 function! XPathSearchPromptCompletion(lead, line, pos)
 
-
-	"call XPathSearch(a:line, s:search_buffer)
 	py xpath = vim.eval("a:line")
 	py search_buffer_name = vim.eval("bufname('%')")
 	py completions = xpath_interface.get_completions(search_buffer_name, xpath)
@@ -227,7 +225,10 @@ function! SetupXPathResultsBuffer(search_buffer)
 	autocmd CursorMoved <buffer> :call XPathResultsCursorlineCheck()
 	autocmd VimResized <buffer> :py xpath_interface.window_resized()
 
-	exe "nmap <buffer> <silent> <cr> :call XPathJumpToResult(" . a:search_buffer . ")<cr>"
+	if bufname(a:search_buffer) != s:results_buffer_name
+		let s:search_buffer_name  = bufname(a:search_buffer)
+		exe "nmap <buffer> <silent> <cr> :call XPathJumpToResult(" . a:search_buffer . ")<cr>"
+	endif
 endfunction
 
 function! XPathJumpToResult(search_buffer)
@@ -266,7 +267,7 @@ syntax match CurrentXPathResult /\(\(^|\d\+.*\%#.*$\)\|\(^|\%#\d\+.*$\)\|\(^\%#|
 
 hi link CurrentXPathResult Error
 xpath/xpath.py	[[[1
-506
+508
 #-*- encoding:utf-8 -*-
 import re
 
@@ -319,7 +320,7 @@ class VimXPathInterface(object):
 		return results
 
 	def prep_searcher(self, search_buffer_name):
-		if search_buffer_name != self.buffer_manager.get_defined_buffer('results'):
+		if search_buffer_name != self.buffer_manager.defined_buffers['results']:
 			search_buffer = self.buffer_manager.get_buffer(search_buffer_name)
 
 			search_text = self.buffer_manager.get_buffer_content(search_buffer)
@@ -354,9 +355,11 @@ class VimBufferManager(object):
 		return self.get_buffer(buffer_name)
 
 	def get_buffer(self, buffer_name):
+		if buffer_name is None:
+			return self.vim.current.buffer
 
 		for buf in [b for b in self.vim.buffers if b.name is not None] :
-			if buf.name.endswith(buffer_name) and buf:
+			if buf.name.endswith(buffer_name):
 				return buf
 
 		return None

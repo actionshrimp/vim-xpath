@@ -59,8 +59,6 @@ endfunction
 
 function! XPathSearchPromptCompletion(lead, line, pos)
 
-
-	"call XPathSearch(a:line, s:search_buffer)
 	py xpath = vim.eval("a:line")
 	py search_buffer_name = vim.eval("bufname('%')")
 	py completions = xpath_interface.get_completions(search_buffer_name, xpath)
@@ -155,7 +153,10 @@ function! SetupXPathResultsBuffer(search_buffer)
 	autocmd CursorMoved <buffer> :call XPathResultsCursorlineCheck()
 	autocmd VimResized <buffer> :py xpath_interface.window_resized()
 
-	exe "nmap <buffer> <silent> <cr> :call XPathJumpToResult(" . a:search_buffer . ")<cr>"
+	if bufname(a:search_buffer) != s:results_buffer_name
+		let s:search_buffer_name  = bufname(a:search_buffer)
+		exe "nmap <buffer> <silent> <cr> :call XPathJumpToResult(" . a:search_buffer . ")<cr>"
+	endif
 endfunction
 
 function! XPathJumpToResult(search_buffer)
