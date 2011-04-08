@@ -43,14 +43,14 @@ endfunction
 
 function! XPathSearchPrompt()
 
-	let s:search_buffer = bufnr('%')
-	silent call XPathResultsSplit(s:search_buffer)
-
 	call inputsave()
 	let l:xpath = input("XPath: ", "//", "customlist,XPathSearchPromptCompletion")
 	call inputrestore()
 
-	if l:xpath != ""
+	if !empty(l:xpath)
+		let s:search_buffer = bufnr('%')
+		silent call XPathResultsSplit(s:search_buffer)
+
 		call XPathSearch(l:xpath, s:search_buffer)
 		call JumpToFirstXPathResult()
 	endif
