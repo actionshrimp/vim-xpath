@@ -17,7 +17,7 @@ class VimXPathInterface(object):
 
 	def build_buffer_manager(self, vim, result_buffer_name):
 		buffer_manager = VimBufferManager(vim)
-		buffer_manager.define_buffer('results', results_buffer_name)
+		buffer_manager.define_buffer('results', result_buffer_name)
 		return buffer_manager
 
 	def xpath_search(self, search_buffer_name, xpath):
@@ -392,7 +392,7 @@ class ResultsFormatterTableRow(object):
 					self.cells[c] = ''
 				else:
 					self.cells[c] = str(cell)
-			except AttributeError as inst:
+			except AttributeError:
 				pass
 
 class CompletionFormatter(object):
