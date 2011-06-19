@@ -10,7 +10,7 @@ This plugin adds XPath search functionality to Vim.
 INSTALLATION						*xpath-installation*
 
 To install the plugin, extract the directory structure into your vimfiles, or 
-source the |vimball|.
+use the excellent Pathogen plugin.
 
 For the plugin to run, you'll need python support enabled. You can check this
 with |:version|, and looking for +python.
@@ -22,15 +22,19 @@ Without these the plugin will let you know on startup, then stop loading.
 ==============================================================================
 USAGE							*xpath-usage*
 
-When you open a file which the plugin recognises (by default: xml, xslt - to 
-define additional filetypes see |xpath-configure|), the mapping X in normal
-mode will launch an XPath search prompt. Type your xpath in here, then hit 
-<Enter> to open a new results window.
+XPath search defines several functions, but the main interface to the plugin 
+is through the XPathSearchPrompt command, which launches the search input 
+prompt. 
 
-The search prompt supports context-sensitive tab completion. To tab complete
-attributes in the current context, type an @ sign at the beginning of the
-current context (e.g. //Parent/Child/@<Tab> will complete all attributes
-for Child).
+You may want to map the command to a key - this will map F5 to call the command:
+
+noremap <F5> XPathSearchPrompt
+
+The search prompt appears, and supports context-sensitive tab completion. By
+default hitting tab will autocomplete a tag that would be available in the
+current XPath context. To tab complete attributes in the current context, type 
+an @ sign at the beginning of the current context (e.g. //Parent/Child/@<Tab> 
+will complete all attributes for Child).
 
 When you do a search, the cursor will jump to the first result in the results
 window. If the result has a line number, you can also press <Enter> on the
@@ -41,11 +45,7 @@ If the XML file is not valid, the plugin will let you know of any XML
 validation errors. Again if there is a line number associated with the error
 you can hit <Enter> to jump there.
 
-Pressing X in normal mode on the results window will cause it to close again.
-
-XPath search defines several functions, but the main interface to the plugin 
-is through the XPathSearchPrompt() function, which launches the search input 
-prompt.
+Pressing q in normal mode on the results window will cause it to close again.
 
 ==============================================================================
 CONFIGURATION						*xpath-configure*
@@ -54,12 +54,3 @@ To disable the plugin for certain situtations, add the following in your
 .vimrc:
 
 let g:loaded_xpath = 1
-
-To add additional filetypes to add the normal mode X mapping to, append a list
-of the filetypes to the g:xpath_search_filetypes variable. For example, to 
-enable the plugin for htm and html files, you can use the following:
-
-let g:xpath_search_filetypes += ['htm', 'html']
-
-To display the filetype for a file you currently have open in order to set up 
-a new match, you can use the command :set filetype.

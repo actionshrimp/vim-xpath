@@ -8,8 +8,6 @@ if exists("g:loaded_xpath")
 endif
 let g:loaded_xpath = 1
 
-let g:xpath_search_filetypes = ['xml', 'xslt']
-
 if !(has("python"))
   echoerr "XPath plugin not loaded due to no python support."
   finish
@@ -31,15 +29,7 @@ endif
 let s:results_buffer_name = 'xpath_search_results'
 let s:result_pattern = '^|\(\d\+\).*$'
 
-autocmd FileType * :call XPathFileType(expand("<amatch>"))
-
-function! XPathFileType(bufft)
-  for ft in g:xpath_search_filetypes
-    if (a:bufft == ft)
-      nnoremap <buffer> X :call XPathSearchPrompt()<cr>
-    end
-  endfor
-endfunction
+command XPathSearchPrompt :call XPathSearchPrompt()
 
 function! XPathSearchPrompt()
 
@@ -149,7 +139,7 @@ function! SetupXPathResultsBuffer(search_buffer)
   "current window is the results window
   setlocal buftype=nofile bufhidden=hide noswapfile syntax=xpathresults nowrap wfh
 
-  nmap <buffer> <silent> X :q<cr>
+  nmap <buffer> <silent> q :q<cr>
   autocmd CursorMoved <buffer> :call XPathResultsCursorlineCheck()
   autocmd VimResized <buffer> :py xpath_interface.window_resized()
 
