@@ -136,6 +136,10 @@ class XPathSearcher(object):
     if self.cache['error'] is None:
       try:
         raw_results = self.cache['eval'](xpath)
+
+        if not isinstance(raw_results, list):
+          raw_results = [raw_results]
+
         results = self.parse_results(raw_results)
 
       except Exception as xpatherr:
@@ -189,10 +193,14 @@ class XPathSearcher(object):
     return parsed
 
   def get_parse_class(self, raw_result):
-    result = XPathTagResult
+    result = XPathExpressionResult
+
+    if isinstance(raw_result, etree._Element):
+      result = XPathTagResult
+
     if isinstance(raw_result, etree._ElementStringResult):
-      if raw_result.is_attribute:
-        result = XPathAttrResult
+        if raw_result.is_attribute:
+          result = XPathAttrResult
 
     return result
 
@@ -506,3 +514,6 @@ class XPathAttrResult(XPathStringResult):
   def build_result(self, el):
     return str(el)
 
+class XPathExpressionResult(XPathValidResult):
+  def build_result(self, el):
+    return str(el)
