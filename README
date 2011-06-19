@@ -1,6 +1,6 @@
 XPath search (and incidental XML validation) plugin for vim.
 
-When editing an XML file, you can press SHIFT+X to enter XPath search mode. Begin typing your xpath, and press TAB for context-sensitive xpath completion.
+When editing an XML file, you can use the :XPathSearchPrompt command to enter XPath search mode. Begin typing your xpath, and press TAB for context-sensitive xpath completion.
 A new results window will pop up beneath the current window, with results matching your XPath, or if the XML file is not valid, the position of the validation error.
 Hitting enter jumps to the results window, and then hitting enter on one of the results jumps to the line in your XML file that matched (or the position of the error).
 
