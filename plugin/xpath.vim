@@ -1,5 +1,5 @@
 "Vim global plugin for XPATH search
-"Last Change: 2011 Apr 02
+"Last Change: 2011 Jun 19 
 "Maintainer:  Dave Aitken <dave.aitken@gmail.com>
 "License: This file is placed in the public domain.
 
