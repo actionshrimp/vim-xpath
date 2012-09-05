@@ -125,7 +125,7 @@ class XPathSearcher(object):
       self.cache['xml'] = xml
       try:
         self.cache['tree'] = etree.XML(xml)
-        self.cache['eval'] = etree.XPathEvaluator(self.cache['tree'])
+        self.cache['eval'] = etree.XPathEvaluator(self.cache['tree'], namespaces=self.cache['tree'].nsmap)
         self.cache['error'] = None
 
       except Exception as xmlerr:
