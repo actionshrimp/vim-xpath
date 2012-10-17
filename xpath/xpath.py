@@ -175,6 +175,19 @@ class XPathSearcher(object):
     xpath_expr = xpath_base + xpath_type_base + "*[starts-with(name(), '" + search_name + "')]"
     results = self.search(xpath_expr)
 
+    # results is modified in this loop instead of making a copy
+    for r in results:
+      if isinstance(r,XPathValidResult) and r.tag.startswith("{"):
+        endns = r.tag.find("}") + 1
+        if endns > 1:
+          resttag = r.tag[endns:]
+          nsprefix = r.tag[1:(endns - 1)]
+          for ns in self.cache['tree'].nsmap:
+            if self.cache['tree'].nsmap[ns] == nsprefix:
+              # modify results variable here
+              r.tag = ns + ":" + resttag
+              break
+
     return {'base': results_base, 'results': results}
 
   def parse_results(self, raw_results):
