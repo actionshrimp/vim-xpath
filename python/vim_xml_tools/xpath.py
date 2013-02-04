@@ -88,6 +88,9 @@ def output_match_type(match):
         else:
             match_type = "String"
 
+    elif isinstance(match, bool):
+        match_type = "Boolean"
+
     return match_type
 
 def output_match_text(match, namespaces):
@@ -97,7 +100,7 @@ def output_match_text(match, namespaces):
     if isinstance(match, etree._Element):
         match_text = prefixed_name_from_absolute_name(match.tag, namespaces)
 
-    if isinstance(match, etree._ElementStringResult):
+    elif isinstance(match, etree._ElementStringResult):
         if match.is_attribute:
             match_text = "@" + match.attrname
 
@@ -118,6 +121,9 @@ def output_value_text(match):
 
     elif isinstance(match, str):
         value_text = match
+
+    elif isinstance(match, bool):
+        value_text = str(match)
 
     if value_text is None:
         value_text = ""

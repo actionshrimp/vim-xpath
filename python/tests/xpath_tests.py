@@ -89,3 +89,12 @@ class XPathTests(unittest.TestCase):
         self.assertEqual(None, evaluated[0]["line_number"])
         self.assertEqual("", evaluated[0]["match_text"])
         self.assertEqual("hello there", evaluated[0]["value_text"])
+
+    def test_boolean(self):
+        xml = read_sample_xml("tests/samples/simple.xml")
+        evaluated = xpath.evaluate(xml, "//TagWithAttribute/@attribute = 'attribute text'")
+
+        self.assertEqual("Boolean", evaluated[0]["match_type"])
+        self.assertEqual(None, evaluated[0]["line_number"])
+        self.assertEqual("", evaluated[0]["match_text"])
+        self.assertEqual("True", evaluated[0]["value_text"])
