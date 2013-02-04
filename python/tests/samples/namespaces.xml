@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root xmlns="http://someurl.org" xmlns:ns="http://anotherurl.org">
+    <Tag/>
+    <ns:Tag/>
+</Root>
