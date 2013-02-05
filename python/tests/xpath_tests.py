@@ -5,23 +5,14 @@ from helpers.file_helpers import read_sample_xml
 from vim_xml_tools import xpath
 
 class XPathTests(unittest.TestCase):
-    def test_node_xpath(self):
+    def test_node_line_number(self):
         evaluated = xpath.evaluate("<Root/>", "//Root")
-
-        self.assertEqual("Root", evaluated[0]["match_text"])
-        self.assertEqual(1, evaluated[0]["line_number"])
-
-    def test_deeper_node_xpath(self):
-        evaluated = xpath.evaluate("<Root><Tag/></Root>", "//Tag")
-
-        self.assertEqual("Tag", evaluated[0]["match_text"])
         self.assertEqual(1, evaluated[0]["line_number"])
 
     def test_multiline_xml(self):
         xml = read_sample_xml("tests/samples/simple.xml")
         evaluated = xpath.evaluate(xml, "//Tag")
 
-        self.assertEqual("Tag", evaluated[0]["match_text"])
         self.assertEqual(3, evaluated[0]["line_number"])
 
     def test_large_xml_line_number(self):
@@ -49,52 +40,52 @@ class XPathTests(unittest.TestCase):
         evaluatedB = xpath.evaluate(xml, "//b:Tag", namespaces)
 
         self.assertEqual(3, evaluatedA[0]["line_number"])
-        self.assertEqual("a:Tag", evaluatedA[0]["match_text"])
-
         self.assertEqual(4, evaluatedB[0]["line_number"])
-        self.assertEqual("b:Tag", evaluatedB[0]["match_text"])
 
     def test_node(self):
         xml = read_sample_xml("tests/samples/simple.xml")
         evaluated = xpath.evaluate(xml, "//Tag")
 
-        self.assertEqual("Node", evaluated[0]["match_type"])
         self.assertEqual(3, evaluated[0]["line_number"])
-        self.assertEqual("Tag", evaluated[0]["match_text"])
-        self.assertEqual("", evaluated[0]["value_text"])
+        self.assertEqual("<Tag>", evaluated[0]["match"])
+        self.assertEqual("", evaluated[0]["value"])
 
     def test_attribute(self):
         xml = read_sample_xml("tests/samples/simple.xml")
         evaluated = xpath.evaluate(xml, "//TagWithAttribute/@attribute")
 
-        self.assertEqual("Attribute", evaluated[0]["match_type"])
         self.assertEqual(5, evaluated[0]["line_number"])
-        self.assertEqual("@attribute", evaluated[0]["match_text"])
-        self.assertEqual("attribute text", evaluated[0]["value_text"])
+        self.assertEqual("@attribute", evaluated[0]["match"])
+        self.assertEqual("attribute text", evaluated[0]["value"])
 
     def test_text(self):
         xml = read_sample_xml("tests/samples/simple.xml")
         evaluated = xpath.evaluate(xml, "//TagWithText/text()")
 
-        self.assertEqual("String", evaluated[0]["match_type"])
         self.assertEqual(4, evaluated[0]["line_number"])
-        self.assertEqual("", evaluated[0]["match_text"])
-        self.assertEqual("element text", evaluated[0]["value_text"])
+        self.assertEqual("string", evaluated[0]["match"])
+        self.assertEqual("element text", evaluated[0]["value"])
 
     def test_parentless_text(self):
         xml = read_sample_xml("tests/samples/simple.xml")
         evaluated = xpath.evaluate(xml, "'hello there'")
 
-        self.assertEqual("String", evaluated[0]["match_type"])
         self.assertEqual(None, evaluated[0]["line_number"])
-        self.assertEqual("", evaluated[0]["match_text"])
-        self.assertEqual("hello there", evaluated[0]["value_text"])
+        self.assertEqual("string", evaluated[0]["match"])
+        self.assertEqual("hello there", evaluated[0]["value"])
 
     def test_boolean(self):
         xml = read_sample_xml("tests/samples/simple.xml")
         evaluated = xpath.evaluate(xml, "//TagWithAttribute/@attribute = 'attribute text'")
 
-        self.assertEqual("Boolean", evaluated[0]["match_type"])
         self.assertEqual(None, evaluated[0]["line_number"])
-        self.assertEqual("", evaluated[0]["match_text"])
-        self.assertEqual("True", evaluated[0]["value_text"])
+        self.assertEqual("boolean", evaluated[0]["match"])
+        self.assertEqual("true()", evaluated[0]["value"])
+
+    def test_numeric(self):
+        xml = read_sample_xml("tests/samples/simple.xml")
+        evaluated = xpath.evaluate(xml, "number(//TagWithNumeric)")
+
+        self.assertEqual(None, evaluated[0]["line_number"])
+        self.assertEqual("numeric", evaluated[0]["match"])
+        self.assertEqual(250, float(evaluated[0]["value"]))

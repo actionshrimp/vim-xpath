@@ -55,9 +55,8 @@ def tree_match_to_output_match(match, namespaces):
     """Convert an lxml xpath match to a result output dictionary"""
     out = dict()
     out["line_number"] = output_line_number(match)
-    out["match_type"] = output_match_type(match)
-    out["match_text"] = output_match_text(match, namespaces)
-    out["value_text"] = output_value_text(match)
+    out["match"] = output_match(match, namespaces)
+    out["value"] = output_value(match)
 
     return out
 
@@ -75,58 +74,43 @@ def output_line_number(match):
 
     return sourceline
 
-def output_match_type(match):
+def output_match(match, namespaces):
     """Return an output 'type' for a particular match result"""
-    match_type = "?"
+    out = "?"
 
     if isinstance(match, etree._Element):
-        match_type = "Node"
+        prefixed_name = prefixed_name_from_absolute_name(match.tag, namespaces)
+        out = "<{0}>".format(prefixed_name)
 
     elif isinstance(match, etree._ElementStringResult):
         if match.is_attribute:
-            match_type = "Attribute"
+            prefixed_name = prefixed_name_from_absolute_name(match.attrname, namespaces)
+            out = "@{0}".format(prefixed_name)
         else:
-            match_type = "String"
+            out = "string"
 
     elif isinstance(match, bool):
-        match_type = "Boolean"
+        out = "boolean"
 
-    return match_type
+    elif isinstance(match, float):
+        out = "numeric"
 
-def output_match_text(match, namespaces):
-    """Text representing the match of the XPath"""
-    match_text = ""
+    return out
 
-    if isinstance(match, etree._Element):
-        match_text = prefixed_name_from_absolute_name(match.tag, namespaces)
-
-    elif isinstance(match, etree._ElementStringResult):
-        if match.is_attribute:
-            match_text = "@" + match.attrname
-
-    if match_text is None:
-        match_text = ""
-
-    return match_text
-
-def output_value_text(match):
+def output_value(match):
     """Text representing the value of the XPath"""
     value_text = ""
 
     if isinstance(match, etree._Element):
-        value_text = match.text
-
-    elif isinstance(match, etree._ElementStringResult):
-        value_text = match
-
-    elif isinstance(match, str):
-        value_text = match
+        if match.text is not None:
+            value_text = match.text
 
     elif isinstance(match, bool):
-        value_text = str(match)
+        bool_value = str(match).lower()
+        value_text = "{0}()".format(bool_value)
 
-    if value_text is None:
-        value_text = ""
+    else:
+        value_text = match
 
     return value_text
 

@@ -3,4 +3,5 @@
     <Tag/>
     <TagWithText>element text</TagWithText>
     <TagWithAttribute attribute="attribute text"/>
+    <TagWithNumeric>250</TagWithNumeric>
 </Root>
