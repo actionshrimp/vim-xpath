@@ -18,7 +18,6 @@ class XPathTests(unittest.TestCase):
     def test_large_xml_line_number(self):
         #Reported that lxml cuts off sourceline at 65535 due to
         #libxml2 limitation https://bugs.launchpad.net/lxml/+bug/674775
-
         xml = read_sample_xml("tests/samples/very_large.xml")
         evaluated = xpath.evaluate(xml, "//Match")
 
