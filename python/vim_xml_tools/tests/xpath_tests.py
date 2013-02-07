@@ -10,7 +10,7 @@ class XPathTests(unittest.TestCase):
         self.assertEqual(1, evaluated[0]["line_number"])
 
     def test_multiline_xml(self):
-        xml = read_sample_xml("tests/samples/simple.xml")
+        xml = read_sample_xml("simple.xml")
         evaluated = xpath.evaluate(xml, "//Tag")
 
         self.assertEqual(3, evaluated[0]["line_number"])
@@ -18,7 +18,7 @@ class XPathTests(unittest.TestCase):
     def test_large_xml_line_number(self):
         #Reported that lxml cuts off sourceline at 65535 due to
         #libxml2 limitation https://bugs.launchpad.net/lxml/+bug/674775
-        xml = read_sample_xml("tests/samples/very_large.xml")
+        xml = read_sample_xml("very_large.xml")
         evaluated = xpath.evaluate(xml, "//Match")
 
         self.assertEqual(3, evaluated[0]["line_number"])
@@ -34,7 +34,7 @@ class XPathTests(unittest.TestCase):
         namespaces["a"] = "http://someurl.org"
         namespaces["b"] = "http://anotherurl.org"
 
-        xml = read_sample_xml("tests/samples/namespaces.xml")
+        xml = read_sample_xml("namespaces.xml")
         evaluatedA = xpath.evaluate(xml, "//a:Tag", namespaces)
         evaluatedB = xpath.evaluate(xml, "//b:Tag", namespaces)
 
@@ -42,7 +42,7 @@ class XPathTests(unittest.TestCase):
         self.assertEqual(4, evaluatedB[0]["line_number"])
 
     def test_node(self):
-        xml = read_sample_xml("tests/samples/simple.xml")
+        xml = read_sample_xml("simple.xml")
         evaluated = xpath.evaluate(xml, "//Tag")
 
         self.assertEqual(3, evaluated[0]["line_number"])
@@ -50,7 +50,7 @@ class XPathTests(unittest.TestCase):
         self.assertEqual("", evaluated[0]["value"])
 
     def test_attribute(self):
-        xml = read_sample_xml("tests/samples/simple.xml")
+        xml = read_sample_xml("simple.xml")
         evaluated = xpath.evaluate(xml, "//TagWithAttribute/@attribute")
 
         self.assertEqual(5, evaluated[0]["line_number"])
@@ -58,7 +58,7 @@ class XPathTests(unittest.TestCase):
         self.assertEqual("attribute text", evaluated[0]["value"])
 
     def test_text(self):
-        xml = read_sample_xml("tests/samples/simple.xml")
+        xml = read_sample_xml("simple.xml")
         evaluated = xpath.evaluate(xml, "//TagWithText/text()")
 
         self.assertEqual(4, evaluated[0]["line_number"])
@@ -66,7 +66,7 @@ class XPathTests(unittest.TestCase):
         self.assertEqual("element text", evaluated[0]["value"])
 
     def test_parentless_text(self):
-        xml = read_sample_xml("tests/samples/simple.xml")
+        xml = read_sample_xml("simple.xml")
         evaluated = xpath.evaluate(xml, "'hello there'")
 
         self.assertEqual(None, evaluated[0]["line_number"])
@@ -74,7 +74,7 @@ class XPathTests(unittest.TestCase):
         self.assertEqual("hello there", evaluated[0]["value"])
 
     def test_boolean(self):
-        xml = read_sample_xml("tests/samples/simple.xml")
+        xml = read_sample_xml("simple.xml")
         evaluated = xpath.evaluate(xml, "//TagWithAttribute/@attribute = 'attribute text'")
 
         self.assertEqual(None, evaluated[0]["line_number"])
@@ -82,7 +82,7 @@ class XPathTests(unittest.TestCase):
         self.assertEqual("true()", evaluated[0]["value"])
 
     def test_numeric(self):
-        xml = read_sample_xml("tests/samples/simple.xml")
+        xml = read_sample_xml("simple.xml")
         evaluated = xpath.evaluate(xml, "number(//TagWithNumeric)")
 
         self.assertEqual(None, evaluated[0]["line_number"])
