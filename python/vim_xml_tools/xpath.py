@@ -25,7 +25,8 @@ def evaluate(xml, xpath, namespaces=dict()):
             #actually reports correctly
             matches.append(output_match)
         else:
-            #If there are any higher range matches, we will have to 'compress lines'
+            #If there are any higher range matches, 
+            #we will have to 'compress lines'
             line_compress_required = True
             break;
 
