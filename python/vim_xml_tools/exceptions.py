@@ -11,12 +11,14 @@ def from_lxml_exception(e):
 
     return out
 
-class XPathNamespaceUndefinedError(Exception):
-    def __init__(self, e):
-        self.inner = e
-        self.message = e.message
-
 class XPathError(Exception):
     def __init__(self, e):
         self.inner = e
-        self.message = e.message
+        self.message = "Error occurred while evaluating XPath: " + e.message
+
+class XPathNamespaceUndefinedError(XPathError):
+    def __init__(self, e):
+        self.inner = e
+        self.message = "XPath contained a namespace prefix that was " + \
+            "undefined. Please define it (see :help xml-tools-namespaces)."
+

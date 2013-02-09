@@ -44,20 +44,33 @@ class VimAdaptorTests(unittest.TestCase):
         test_xml = "<Root>\n<Tag/>\n<Tag/>\n</Root>"
         self.stub_vim_current_buffer(test_xml)
         a.evaluate_xpath_on_current_buffer("//Tag")
-        self.assertEqual("let s:xpath_results_list = []", 
-                         VimModuleStub.evaluated[0])
+        self.assertEqual("setloclist(0, [], 'r')", VimModuleStub.evaluated[0])
         
-        self.assertEqual("let s:result_dict = " +
-                         "{bufnr: 0, lnum: 2, text: '<Tag>'}",
+        self.assertEqual("setloclist(0, [{" +
+                         "bufnr: 0, " +
+                         "lnum: 2, " +
+                         "text: '<Tag>'" +
+                         "}], 'a')",
                          VimModuleStub.evaluated[1])
-        self.assertEqual("let s:xpath_results_list += s:result_dict",
+        
+        self.assertEqual("setloclist(0, [{" +
+                         "bufnr: 0, " +
+                         "lnum: 3, " +
+                         "text: '<Tag>'" +
+                         "}], 'a')",
                          VimModuleStub.evaluated[2])
-        
-        self.assertEqual("let s:result_dict = " +
-                         "{bufnr: 0, lnum: 3, text: '<Tag>'}",
-                         VimModuleStub.evaluated[3])
-        self.assertEqual("let s:xpath_results_list += s:result_dict",
-                         VimModuleStub.evaluated[4])
-        
-        self.assertEqual("setloclist(0, s:xpath_results_list, 'r')",
-                         VimModuleStub.evaluated[5])
+
+    def test_xpath_with_undefined_namespace_errors(self):
+        test_xml = "<Root xmlns:ns='test.org'><ns:Tag/></Root>"
+        self.stub_vim_current_buffer(test_xml)
+
+        a.evaluate_xpath_on_current_buffer('//vimns:Tag')
+
+        self.assertEqual("setloclist(0, [{" +
+                         "bufnr: 0, " +
+                         "type: 'E', " +
+                         "text: 'XPath contained a namespace prefix that " +
+                            "was undefined. Please define it (see :help " +
+                            "xml-tools-namespaces).'" +
+                         "}], 'a')",
+                         VimModuleStub.evaluated[1])

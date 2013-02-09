@@ -5,6 +5,7 @@ except ImportError:
     vim = None
     
 from vim_xml_tools import xpath as x
+from vim_xml_tools.exceptions import XPathError
 
 VARIABLE_SCOPE = "s:"
 
@@ -12,25 +13,35 @@ def get_current_buffer_string():
     return "\n".join(vim.current.buffer)
 
 def evaluate_xpath_on_current_buffer(xpath):
-    eval_list = []
-    eval_list.append("let {0}xpath_results_list = []".format(VARIABLE_SCOPE))
+    loc_list = VimLocListAdaptor()
+    loc_list.clear_current_list()
     
     xml = get_current_buffer_string()
-    for result in x.evaluate(xml, xpath, {}):
-        
-        eval_list.append(("let {0}result_dict = " + 
-                          "{{bufnr: {1}, lnum: {2}, text: '{3}{4}'}}"
-                         ).format(VARIABLE_SCOPE,
-                                  vim.current.buffer.number, 
-                                  result["line_number"], 
-                                  result["match"],
-                                  result["value"]))
-                         
-        eval_list.append(("let {0}xpath_results_list += {0}result_dict"
-                         ).format(VARIABLE_SCOPE)) 
 
-    eval_list.append(("setloclist(0, {0}xpath_results_list, 'r')"
-                     ).format(VARIABLE_SCOPE))
+    try:
+        results = x.evaluate(xml, xpath, {})
+        for result in results:
+            loc_list.add_result_entry(result["line_number"], result["match"])
+    except XPathError as e:
+        loc_list.add_error_entry(e.message)
 
-    for eval_line in eval_list:
-        vim.eval(eval_line)
+class VimLocListAdaptor(object):
+
+    def clear_current_list(self):
+        vim.eval("setloclist(0, [], 'r')")
+
+    def add_result_entry(self, line_number, text):
+        vim.eval(("setloclist(0, [{{" +
+                  "bufnr: {0}, " +
+                  "lnum: {1}, " +
+                  "text: '{2}'" +
+                  "}}], 'a')"
+                 ).format(vim.current.buffer.number, line_number, text))
+
+    def add_error_entry(self, error_text):
+        vim.eval(("setloclist(0, [{{" +
+                  "bufnr: {0}, " +
+                  "type: 'E', " +
+                  "text: '{1}'" +
+                  "}}], 'a')"
+                 ).format(vim.current.buffer.number, error_text))
