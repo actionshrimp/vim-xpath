@@ -1,5 +1,7 @@
 import re
+
 from lxml import etree
+from vim_xml_tools.exceptions import from_lxml_exception
 
 LIBXML2_MAX_LINE = 65534
 
@@ -8,7 +10,11 @@ def evaluate(xml, xpath, namespaces=dict()):
     Reports line numbers correctly on xml with over 65534 lines"""
 
     tree = etree.fromstring(xml)
-    tree_matches = tree.xpath(xpath, namespaces=namespaces)
+    try:
+        tree_matches = tree.xpath(xpath, namespaces=namespaces)
+    except etree.LxmlError as lxml_error:
+        wrapped = from_lxml_exception(lxml_error)
+        raise wrapped
 
     if not(isinstance(tree_matches, list)):
         tree_matches = [tree_matches]

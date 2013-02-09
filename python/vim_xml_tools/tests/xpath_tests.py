@@ -3,8 +3,10 @@ import unittest
 from helpers.file_helpers import read_sample_xml
 
 from vim_xml_tools import xpath
+from vim_xml_tools.exceptions import XPathNamespaceUndefinedError
 
 class XPathTests(unittest.TestCase):
+
     def test_node_line_number(self):
         evaluated = xpath.evaluate("<Root/>", "//Root")
         self.assertEqual(1, evaluated[0]["line_number"])
@@ -75,7 +77,8 @@ class XPathTests(unittest.TestCase):
 
     def test_boolean(self):
         xml = read_sample_xml("simple.xml")
-        evaluated = xpath.evaluate(xml, "//TagWithAttribute/@attribute = 'attribute text'")
+        evaluated = xpath.evaluate(xml, 
+                        "//TagWithAttribute/@attribute = 'attribute text'")
 
         self.assertEqual(None, evaluated[0]["line_number"])
         self.assertEqual("boolean", evaluated[0]["match"])
@@ -88,3 +91,10 @@ class XPathTests(unittest.TestCase):
         self.assertEqual(None, evaluated[0]["line_number"])
         self.assertEqual("numeric", evaluated[0]["match"])
         self.assertEqual(250, float(evaluated[0]["value"]))
+
+    def test_undefined_namespace_throws_wrapped_exception(self):
+        xml = read_sample_xml("simple.xml")
+
+        with self.assertRaises(XPathNamespaceUndefinedError):
+            xpath.evaluate(xml, "//blarg:Tag")
+
