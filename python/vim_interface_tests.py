@@ -41,7 +41,7 @@ class VimInterfaceTests(unittest.TestCase):
                          i.get_current_buffer_string())
 
     def test_xpath_evaluation(self):
-        test_xml = "<Root>\n<Tag/>\n</Root>"
+        test_xml = "<Root>\n<Tag/>\n<Tag/>\n</Root>"
         self.stub_vim_current_buffer(test_xml)
         i.evaluate_xpath_on_current_buffer("//Tag")
         self.assertEqual("let s:xpath_results_list = []", 
@@ -52,3 +52,12 @@ class VimInterfaceTests(unittest.TestCase):
                          VimModuleStub.evaluated[1])
         self.assertEqual("let s:xpath_results_list += s:result_dict",
                          VimModuleStub.evaluated[2])
+        
+        self.assertEqual("let s:result_dict = " +
+                         "{bufnr: 0, lnum: 3, text: '<Tag>'}",
+                         VimModuleStub.evaluated[3])
+        self.assertEqual("let s:xpath_results_list += s:result_dict",
+                         VimModuleStub.evaluated[4])
+        
+        self.assertEqual("setloclist(0, s:xpath_results_list, 'r')",
+                         VimModuleStub.evaluated[5])
