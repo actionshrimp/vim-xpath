@@ -1,4 +1,4 @@
-import unittest, sys
+import unittest
 
 from helpers.file_helpers import read_sample_xml
 
