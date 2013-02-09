@@ -1,6 +1,6 @@
 import unittest
 
-import vim_interface as i
+import vim_adaptor as a
 
 class VimModuleBufferStub(list):
 
@@ -26,24 +26,24 @@ class VimModuleStub(object):
     def eval(self, vim_command):
         VimModuleStub.evaluated.append(vim_command)
 
-class VimInterfaceTests(unittest.TestCase):
+class VimAdaptorTests(unittest.TestCase):
 
     def stub_vim_current_buffer(self, buffer_contents):
-        i.vim.current.buffer.set_contents(buffer_contents)
+        a.vim.current.buffer.set_contents(buffer_contents)
 
     def setUp(self):
-        i.vim = VimModuleStub()
+        a.vim = VimModuleStub()
         
     def test_buffer_mock(self):
         test_string = "test buffer contents"
         self.stub_vim_current_buffer(test_string)
         self.assertEqual("test buffer contents", 
-                         i.get_current_buffer_string())
+                         a.get_current_buffer_string())
 
     def test_xpath_evaluation(self):
         test_xml = "<Root>\n<Tag/>\n<Tag/>\n</Root>"
         self.stub_vim_current_buffer(test_xml)
-        i.evaluate_xpath_on_current_buffer("//Tag")
+        a.evaluate_xpath_on_current_buffer("//Tag")
         self.assertEqual("let s:xpath_results_list = []", 
                          VimModuleStub.evaluated[0])
         
