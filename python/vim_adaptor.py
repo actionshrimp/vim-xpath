@@ -20,8 +20,11 @@ def evaluate_xpath_on_current_buffer(xpath):
 
     try:
         results = x.evaluate(xml, xpath, {})
-        for result in results:
-            loc_list.add_result_entry(result)
+        if len(results) > 0:
+            for result in results:
+                loc_list.add_result_entry(result)
+        else:
+            loc_list.add_error_entry('No results returned')
     except XPathError as e:
         loc_list.add_error_entry(e.message)
 

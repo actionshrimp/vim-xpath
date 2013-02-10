@@ -19,7 +19,9 @@ command XPath :call XPathSearchPrompt()
 
 function! XPathSearchPrompt()
 
+    inputsave()
     let l:xpath = input("XPath: ", "/")
+    inputrestore()
     let l:xpath = escape(l:xpath, "'")
     if !empty(l:xpath)
         execute "py vim_adaptor.evaluate_xpath_on_current_buffer('" . l:xpath . "')"
