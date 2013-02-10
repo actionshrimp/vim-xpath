@@ -9,14 +9,15 @@ from vim_xml_tools.exceptions import XPathError
 
 VARIABLE_SCOPE = "s:"
 
-def get_current_buffer_string():
-    return "\n".join(vim.current.buffer)
+def get_buffer_string(bufnr):
+    buffer = vim.buffers[bufnr]
+    return "\n".join(buffer)
 
-def evaluate_xpath_on_current_buffer(xpath):
-    loc_list = VimLocListAdaptor()
+def evaluate_xpath(bufnr, winnr, xpath):
+    loc_list = VimLocListAdaptor(bufnr, winnr)
     loc_list.clear_current_list()
     
-    xml = get_current_buffer_string()
+    xml = get_buffer_string(bufnr)
 
     try:
         results = x.evaluate(xml, xpath, {})
@@ -30,11 +31,15 @@ def evaluate_xpath_on_current_buffer(xpath):
 
 class VimLocListAdaptor(object):
 
+    def __init__(self, bufnr, winnr):
+        self.bufnr = bufnr
+        self.winnr = winnr
+
     def clear_current_list(self):
-        vim.eval("setloclist(0, [], 'r')")
+        vim.eval("setloclist({0}, [], 'r')".format(self.winnr))
 
     def add_result_entry(self, result):
-        bufnr_arg = "'bufnr': {0}, ".format(vim.current.buffer.number)
+        bufnr_arg = "'bufnr': {0}, ".format(self.bufnr)
 
         lnum_arg = ""
         if result["line_number"] is not None:
@@ -46,13 +51,13 @@ class VimLocListAdaptor(object):
 
         text_arg = "'text': '{0}', ".format(text)
 
-        vim.eval("setloclist(0, [{" + 
-                bufnr_arg + lnum_arg + text_arg + "}], 'a')")
+        vim.eval(("setloclist({0}, [{{{1}}}], 'a')"
+                 ).format(self.winnr, bufnr_arg + lnum_arg + text_arg))
 
     def add_error_entry(self, error_text):
-        vim.eval(("setloclist(0, [{{" +
-                  "'bufnr': {0}, " +
+        vim.eval(("setloclist({0}, [{{" +
+                  "'bufnr': {1}, " +
                   "'type': 'E', " +
-                  "'text': '{1}'" +
+                  "'text': '{2}'" +
                   "}}], 'a')"
-                 ).format(vim.current.buffer.number, error_text))
+                 ).format(self.winnr, self.bufnr, error_text))
