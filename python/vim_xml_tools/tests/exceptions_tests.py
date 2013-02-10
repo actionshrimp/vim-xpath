@@ -1,9 +1,7 @@
 import unittest
 from lxml import etree
 
-from vim_xml_tools.exceptions import from_lxml_exception
-from vim_xml_tools.exceptions import XPathNamespaceUndefinedError
-from vim_xml_tools.exceptions import XPathError
+from vim_xml_tools.exceptions import *
 
 class ExceptionsTests(unittest.TestCase):
 
@@ -13,7 +11,8 @@ class ExceptionsTests(unittest.TestCase):
     def test_undefined_namespace_in_xpath_error_is_converted(self):
         error = None
         try:
-            self.tree.xpath("//a:Tag")
+            xp = etree.XPath("//a:Tag")
+            xp(self.tree)
         except Exception as e:
             error = e
 
@@ -23,9 +22,9 @@ class ExceptionsTests(unittest.TestCase):
     def test_xpath_syntax_error_is_converted(self):
         error = None
         try:
-            self.tree.xpath("//A/Bad/XPa()th")
+            etree.XPath("//A/Bad/XPa()th")
         except Exception as e:
             error = e
 
         converted = from_lxml_exception(error)
-        self.assertIsInstance(converted, XPathError)
+        self.assertIsInstance(converted, XPathSyntaxError)

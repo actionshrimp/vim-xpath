@@ -6,15 +6,20 @@ from vim_xml_tools.exceptions import from_lxml_exception
 LIBXML2_MAX_LINE = 65534
 
 def evaluate(xml, xpath, namespaces=dict()):
-    """Evaluate an xpath against some xml. 
-    Reports line numbers correctly on xml with over 65534 lines"""
-
-    tree = etree.fromstring(xml)
     try:
-        tree_matches = tree.xpath(xpath, namespaces=namespaces)
+        compiled = etree.XPath(xpath, namespaces=namespaces)
+        results = _evaluate(xml, compiled, namespaces)
+        return results
     except etree.LxmlError as lxml_error:
         wrapped = from_lxml_exception(lxml_error)
         raise wrapped
+
+def _evaluate(xml, xpath, namespaces=dict()):
+    """Evaluate a compiled xpath against some xml. 
+    Reports line numbers correctly on xml with over 65534 lines"""
+
+    tree = etree.fromstring(xml)
+    tree_matches = xpath(tree)
 
     if not(isinstance(tree_matches, list)):
         tree_matches = [tree_matches]
@@ -23,7 +28,7 @@ def evaluate(xml, xpath, namespaces=dict()):
     line_compress_required = False
 
     for match in tree_matches:
-        output_match = tree_match_to_output_match(match, namespaces)
+        output_match = _tree_match_to_output_match(match, namespaces)
 
         if (output_match["line_number"] is None) or \
                 output_match["line_number"] <= LIBXML2_MAX_LINE:
@@ -43,7 +48,7 @@ def evaluate(xml, xpath, namespaces=dict()):
 
         #Re-evaluate with the new source XML recursively,
         #to handle all higher line ranges
-        line_compressed_matches = evaluate(line_compressed_xml, xpath)
+        line_compressed_matches = _evaluate(line_compressed_xml, xpath)
 
         #Only take matches which we haven't already found, as the higher range
         #evaluations will have incorrect line numbers for matches in lower ranges
@@ -58,16 +63,16 @@ def evaluate(xml, xpath, namespaces=dict()):
 
     return matches
 
-def tree_match_to_output_match(match, namespaces):
+def _tree_match_to_output_match(match, namespaces):
     """Convert an lxml xpath match to a result output dictionary"""
     out = dict()
-    out["line_number"] = output_line_number(match)
-    out["match"] = output_match(match, namespaces)
-    out["value"] = output_value(match)
+    out["line_number"] = _output_line_number(match)
+    out["match"] = _output_match(match, namespaces)
+    out["value"] = _output_value(match)
 
     return out
 
-def output_line_number(match):
+def _output_line_number(match):
     """Return an output source line for a particular match result"""
     sourceline = None
 
@@ -81,17 +86,17 @@ def output_line_number(match):
 
     return sourceline
 
-def output_match(match, namespaces):
+def _output_match(match, namespaces):
     """Return an output 'type' for a particular match result"""
     out = "?"
 
     if isinstance(match, etree._Element):
-        prefixed_name = prefixed_name_from_absolute_name(match.tag, namespaces)
+        prefixed_name = _prefixed_name_from_absolute_name(match.tag, namespaces)
         out = "<{0}>".format(prefixed_name)
 
     elif isinstance(match, etree._ElementStringResult):
         if match.is_attribute:
-            prefixed_name = prefixed_name_from_absolute_name(match.attrname, namespaces)
+            prefixed_name = _prefixed_name_from_absolute_name(match.attrname, namespaces)
             out = "@{0}".format(prefixed_name)
         else:
             out = "string"
@@ -104,7 +109,7 @@ def output_match(match, namespaces):
 
     return out
 
-def output_value(match):
+def _output_value(match):
     """Text representing the value of the XPath"""
     value_text = ""
 
@@ -121,7 +126,7 @@ def output_value(match):
 
     return value_text
 
-def prefixed_name_from_absolute_name(name, namespaces):
+def _prefixed_name_from_absolute_name(name, namespaces):
     """Convert an lxml {namespaceuri}Name to prefix:Name,
     with prefixes defined in the namespaces dictionary"""
     regex_match = re.search('^\{(.*)\}', name)

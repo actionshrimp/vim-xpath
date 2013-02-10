@@ -69,8 +69,6 @@ class VimAdaptorTests(unittest.TestCase):
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 0, " +
                          "'type': 'E', " +
-                         "'text': 'XPath contained a namespace prefix that " +
-                            "was undefined. Please define it (see :help " +
-                            "xml-tools-namespaces).'" +
+                         "'text': 'Undefined namespace prefix in XPath'" +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
