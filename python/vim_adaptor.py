@@ -31,12 +31,15 @@ class VimLocListAdaptor(object):
         vim.eval("setloclist(0, [], 'r')")
 
     def add_result_entry(self, line_number, text):
-        vim.eval(("setloclist(0, [{{" +
-                  "'bufnr': {0}, " +
-                  "'lnum': {1}, " +
-                  "'text': '{2}'" +
-                  "}}], 'a')"
-                 ).format(vim.current.buffer.number, line_number, text))
+        bufnr = "'bufnr': {0}, ".format(vim.current.buffer.number)
+
+        lnum = ""
+        if line_number is not None:
+            lnum = "'lnum': {0}, ".format(line_number)
+
+        text = "'text': '{0}', ".format(text)
+
+        vim.eval("setloclist(0, [{" + bufnr + lnum + text + "}], 'a')")
 
     def add_error_entry(self, error_text):
         vim.eval(("setloclist(0, [{{" +

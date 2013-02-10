@@ -49,14 +49,14 @@ class VimAdaptorTests(unittest.TestCase):
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 0, " +
                          "'lnum': 2, " +
-                         "'text': '<Tag>'" +
+                         "'text': '<Tag>', " +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
         
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 0, " +
                          "'lnum': 3, " +
-                         "'text': '<Tag>'" +
+                         "'text': '<Tag>', " +
                          "}], 'a')",
                          VimModuleStub.evaluated[2])
 
