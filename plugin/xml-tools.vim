@@ -14,3 +14,19 @@ let s:pyfile = fnameescape(s:curfiledir . "/../python/main.py")
 py import sys
 execute "py sys.argv = ['" . s:pyfile . "']"
 execute "pyfile " . s:pyfile
+
+command XPath :call XPathSearchPrompt()
+
+function! XPathSearchPrompt()
+
+    let l:xpath = input("XPath: ", "/")
+    let l:xpath = escape(l:xpath, "'")
+    if !empty(l:xpath)
+        execute "py vim_adaptor.evaluate_xpath_on_current_buffer('" . l:xpath . "')"
+        lwindow
+        if len(getloclist(0)) > 0
+            lfirst
+        endif
+    endif
+
+endf
