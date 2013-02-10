@@ -47,16 +47,16 @@ class VimAdaptorTests(unittest.TestCase):
         self.assertEqual("setloclist(0, [], 'r')", VimModuleStub.evaluated[0])
         
         self.assertEqual("setloclist(0, [{" +
-                         "bufnr: 0, " +
-                         "lnum: 2, " +
-                         "text: '<Tag>'" +
+                         "'bufnr': 0, " +
+                         "'lnum': 2, " +
+                         "'text': '<Tag>'" +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
         
         self.assertEqual("setloclist(0, [{" +
-                         "bufnr: 0, " +
-                         "lnum: 3, " +
-                         "text: '<Tag>'" +
+                         "'bufnr': 0, " +
+                         "'lnum': 3, " +
+                         "'text': '<Tag>'" +
                          "}], 'a')",
                          VimModuleStub.evaluated[2])
 
@@ -67,9 +67,9 @@ class VimAdaptorTests(unittest.TestCase):
         a.evaluate_xpath_on_current_buffer('//vimns:Tag')
 
         self.assertEqual("setloclist(0, [{" +
-                         "bufnr: 0, " +
-                         "type: 'E', " +
-                         "text: 'XPath contained a namespace prefix that " +
+                         "'bufnr': 0, " +
+                         "'type': 'E', " +
+                         "'text': 'XPath contained a namespace prefix that " +
                             "was undefined. Please define it (see :help " +
                             "xml-tools-namespaces).'" +
                          "}], 'a')",

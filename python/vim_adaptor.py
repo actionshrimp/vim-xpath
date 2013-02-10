@@ -32,16 +32,16 @@ class VimLocListAdaptor(object):
 
     def add_result_entry(self, line_number, text):
         vim.eval(("setloclist(0, [{{" +
-                  "bufnr: {0}, " +
-                  "lnum: {1}, " +
-                  "text: '{2}'" +
+                  "'bufnr': {0}, " +
+                  "'lnum': {1}, " +
+                  "'text': '{2}'" +
                   "}}], 'a')"
                  ).format(vim.current.buffer.number, line_number, text))
 
     def add_error_entry(self, error_text):
         vim.eval(("setloclist(0, [{{" +
-                  "bufnr: {0}, " +
-                  "type: 'E', " +
-                  "text: '{1}'" +
+                  "'bufnr': {0}, " +
+                  "'type': 'E', " +
+                  "'text': '{1}'" +
                   "}}], 'a')"
                  ).format(vim.current.buffer.number, error_text))
