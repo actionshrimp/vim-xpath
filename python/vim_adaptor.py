@@ -21,7 +21,7 @@ def evaluate_xpath_on_current_buffer(xpath):
     try:
         results = x.evaluate(xml, xpath, {})
         for result in results:
-            loc_list.add_result_entry(result["line_number"], result["match"])
+            loc_list.add_result_entry(result)
     except XPathError as e:
         loc_list.add_error_entry(e.message)
 
@@ -30,16 +30,21 @@ class VimLocListAdaptor(object):
     def clear_current_list(self):
         vim.eval("setloclist(0, [], 'r')")
 
-    def add_result_entry(self, line_number, text):
-        bufnr = "'bufnr': {0}, ".format(vim.current.buffer.number)
+    def add_result_entry(self, result):
+        bufnr_arg = "'bufnr': {0}, ".format(vim.current.buffer.number)
 
-        lnum = ""
-        if line_number is not None:
-            lnum = "'lnum': {0}, ".format(line_number)
+        lnum_arg = ""
+        if result["line_number"] is not None:
+            lnum_arg = "'lnum': {0}, ".format(result["line_number"])
 
-        text = "'text': '{0}', ".format(text)
+        text = result["match"]
+        if result["value"] != "":
+            text += ": {0}".format(result["value"])
 
-        vim.eval("setloclist(0, [{" + bufnr + lnum + text + "}], 'a')")
+        text_arg = "'text': '{0}', ".format(text)
+
+        vim.eval("setloclist(0, [{" + 
+                bufnr_arg + lnum_arg + text_arg + "}], 'a')")
 
     def add_error_entry(self, error_text):
         vim.eval(("setloclist(0, [{{" +

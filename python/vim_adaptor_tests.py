@@ -72,3 +72,15 @@ class VimAdaptorTests(unittest.TestCase):
                          "'text': 'Undefined namespace prefix in XPath'" +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
+
+    def test_xpath_which_doesnt_return_a_line_number(self):
+        text_xml = "<Root><Tag/></Root>"
+        self.stub_vim_current_buffer(text_xml)
+
+        a.evaluate_xpath_on_current_buffer("'test string'")
+
+        self.assertEqual("setloclist(0, [{" +
+                         "'bufnr': 0, " +
+                         "'text': 'string: test string', " +
+                         "}], 'a')",
+                         VimModuleStub.evaluated[1])
