@@ -42,6 +42,9 @@ function! XPathSearchPrompt()
         \ l:active_buffer . ", " .
         \ l:active_window . ")"
 
+    execute "au InsertEnter <buffer> :call feedkeys(" .
+                \"\"\<C-R>=XPathHistoryPopup()\<CR>\<C-p>\")"
+
     execute "nnoremap <buffer> <silent> <Return> :call XPathComplete(" .
         \ l:search_buffer . ", " .
         \ l:active_buffer . ", " .
@@ -89,4 +92,9 @@ function! s:XPathEvaluate(xpath, active_buffer, active_window)
         \ a:active_buffer . ", " .
         \ a:active_window . ", " .
         \ "'" . a:xpath . "')"
+endf
+
+function! XPathHistoryPopup()
+    call complete(1, reverse(s:xpath_search_history))
+    return ''
 endf
