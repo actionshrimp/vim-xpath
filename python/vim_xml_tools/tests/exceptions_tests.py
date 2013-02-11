@@ -28,3 +28,13 @@ class ExceptionsTests(unittest.TestCase):
 
         converted = from_lxml_exception(error)
         self.assertIsInstance(converted, XPathSyntaxError)
+
+    def test_malformed_xml_error_is_converted(self):
+        error = None
+        try:
+            etree.fromstring("<asdhdkj")
+        except Exception as e:
+            error = e
+
+        converted = from_lxml_exception(error)
+        self.assertIsInstance(converted, XmlError)

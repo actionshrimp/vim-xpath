@@ -5,12 +5,12 @@ except ImportError:
     vim = None
     
 from vim_xml_tools import xpath as x
-from vim_xml_tools.exceptions import XPathError
+from vim_xml_tools.exceptions import XmlToolsError
 
 VARIABLE_SCOPE = "s:"
 
 def get_buffer_string(bufnr):
-    buffer = vim.buffers[bufnr]
+    buffer = vim.buffers[bufnr-1]
     return "\n".join(buffer)
 
 def evaluate_xpath(bufnr, winnr, xpath):
@@ -26,7 +26,7 @@ def evaluate_xpath(bufnr, winnr, xpath):
                 loc_list.add_result_entry(result)
         else:
             loc_list.add_error_entry('No results returned')
-    except XPathError as e:
+    except XmlToolsError as e:
         loc_list.add_error_entry(e.message)
 
 class VimLocListAdaptor(object):

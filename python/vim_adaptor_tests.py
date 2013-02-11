@@ -30,8 +30,8 @@ class VimModuleStub(object):
 class VimAdaptorTests(unittest.TestCase):
 
     def stub_vim_buffer(self, bufnr, buffer_contents):
-        a.vim.buffers[bufnr] = VimModuleBufferStub()
-        a.vim.buffers[bufnr].set_contents(buffer_contents)
+        a.vim.buffers[bufnr-1] = VimModuleBufferStub()
+        a.vim.buffers[bufnr-1].set_contents(buffer_contents)
 
     def setUp(self):
         a.vim = VimModuleStub()
@@ -70,7 +70,8 @@ class VimAdaptorTests(unittest.TestCase):
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 0, " +
                          "'type': 'E', " +
-                         "'text': 'Undefined namespace prefix in XPath'" +
+                         "'text': 'XPath evaluation error: " + 
+                         "undefined namespace prefix'" +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
 

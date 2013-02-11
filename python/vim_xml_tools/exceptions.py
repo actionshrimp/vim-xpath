@@ -3,6 +3,9 @@ from lxml import etree
 def from_lxml_exception(e):
     out = e
 
+    if isinstance(e, etree.ParseError):
+        out = XmlError(e)
+
     if isinstance(e, etree.XPathError):
         out = XPathError(e)
 
@@ -17,22 +20,33 @@ def from_lxml_exception(e):
 
     return out
 
-class XPathError(Exception):
+
+class XmlToolsError(Exception):
     def __init__(self, e):
         self.inner = e
         self.message = e.message
 
+class XmlError(XmlToolsError):
+    def __init__(self, e):
+        self.inner = e
+        self.message = "XML parse error: " + e.message
+
+class XPathError(XmlToolsError):
+    def __init__(self, e):
+        self.inner = e
+        self.message = "XPath error: " + e.message
+
 class XPathSyntaxError(XPathError):
     def __init__(self, e):
         self.inner = e
-        self.message = "Syntax error in XPath: " + e.message
+        self.message = "XPath syntax error: " + e.message
 
 class XPathEvaluationError(XPathError):
     def __init__(self, e):
         self.inner = e
-        self.message = "Error occurred while evaluating XPath: " + e.message
+        self.message = "XPath evaluation error: " + e.message
 
 class XPathNamespaceUndefinedError(XPathEvaluationError):
     def __init__(self, e):
         self.inner = e
-        self.message = "Undefined namespace prefix in XPath"
+        self.message = "XPath evaluation error: undefined namespace prefix"
