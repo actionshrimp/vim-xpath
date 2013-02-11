@@ -17,7 +17,7 @@ py import sys
 execute "py sys.argv = ['" . s:pyfile . "']"
 execute "pyfile " . s:pyfile
 
-command XPath :call XPathSearchPrompt()
+command XPathSearchPrompt :call XPathSearchPrompt()
 
 function! XPathSearchPrompt()
 
@@ -37,13 +37,22 @@ function! XPathSearchPrompt()
     let l:search_window = winnr()
     let l:search_buffer = winbufnr(l:search_window)
 
-    execute "au CursorMovedI <buffer> :silent call <SID>XPathChanged(" .
+    setlocal updatetime=100
+    execute "au CursorHold,CursorHoldI <buffer> :silent call " .
+        \ "<SID>XPathChanged(" .
         \ l:search_buffer . ", " .
         \ l:active_buffer . ", " .
         \ l:active_window . ")"
 
-    execute "au InsertEnter <buffer> :call feedkeys(" .
-                \"\"\<C-R>=XPathHistoryPopup()\<CR>\<C-p>\")"
+    execute "au CompleteDone <buffer> :silent call <SID>XPathChanged(" .
+        \ l:search_buffer . ", " .
+        \ l:active_buffer . ", " .
+        \ l:active_window . ")"
+
+    execute "au BufLeave <buffer> :silent call XPathComplete(" .
+        \ l:search_buffer . ", " .
+        \ l:active_buffer . ", " .
+        \ l:active_window . ")"
 
     execute "nnoremap <buffer> <silent> <Return> :call XPathComplete(" .
         \ l:search_buffer . ", " .
@@ -54,6 +63,8 @@ function! XPathSearchPrompt()
         \ l:search_buffer . ", " .
         \ l:active_buffer . ", " .
         \ l:active_window . ")<CR>"
+
+    inoremap <buffer> <silent> <C-h> <C-R>=XPathHistoryPopup()<CR>
 
     startinsert
 endf

@@ -86,3 +86,7 @@ class VimAdaptorTests(unittest.TestCase):
                          "'text': 'string: test string', " +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
+
+    def test_empty_buffer(self):
+        self.stub_vim_buffer(0, "")
+        a.evaluate_xpath(0, 0, "//*")

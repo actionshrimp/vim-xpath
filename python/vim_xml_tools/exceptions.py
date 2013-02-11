@@ -29,24 +29,31 @@ class XmlToolsError(Exception):
 class XmlError(XmlToolsError):
     def __init__(self, e):
         self.inner = e
-        self.message = "XML parse error: " + e.message
+        self.message = "XML parse error: " + wrap_error_message(e.message)
 
 class XPathError(XmlToolsError):
     def __init__(self, e):
         self.inner = e
-        self.message = "XPath error: " + e.message
+        self.message = "XPath error: " + wrap_error_message(e.message)
 
 class XPathSyntaxError(XPathError):
     def __init__(self, e):
         self.inner = e
-        self.message = "XPath syntax error: " + e.message
+        self.message = "XPath syntax error: " + wrap_error_message(e.message)
 
 class XPathEvaluationError(XPathError):
     def __init__(self, e):
         self.inner = e
-        self.message = "XPath evaluation error: " + e.message
+        self.message = "XPath evaluation error: " + \
+                                                wrap_error_message(e.message)
 
 class XPathNamespaceUndefinedError(XPathEvaluationError):
     def __init__(self, e):
         self.inner = e
         self.message = "XPath evaluation error: undefined namespace prefix"
+
+def wrap_error_message(msg):
+    if msg is not None:
+        return msg
+    else:
+        return "Unknown"
