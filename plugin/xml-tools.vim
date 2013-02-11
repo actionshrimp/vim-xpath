@@ -91,7 +91,7 @@ function! s:XPathEvaluate(xpath, active_buffer, active_window)
     execute "py vim_adaptor.evaluate_xpath(" .
         \ a:active_buffer . ", " .
         \ a:active_window . ", " .
-        \ "'" . a:xpath . "')"
+        \ "'" . l:xpath . "')"
 endf
 
 function! XPathHistoryPopup()
