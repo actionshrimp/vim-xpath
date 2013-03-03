@@ -11,3 +11,10 @@ class NamespacePrefixGuesserTests(unittest.TestCase):
         prefixes = namespace_prefix_guesser.guess_prefixes(xml)
 
         self.assertEqual("http://onlyPrefix.com", prefixes["onlyPrefix"])
+
+    def test_default_namespace_is_called_default(self):
+        xml = read_sample_xml("namespaces.xml")
+        prefixes = namespace_prefix_guesser.guess_prefixes(xml)
+
+        self.assertEqual("http://someurl.org", prefixes["default"])
+        self.assertEqual("http://anotherurl.org", prefixes["ns"])
