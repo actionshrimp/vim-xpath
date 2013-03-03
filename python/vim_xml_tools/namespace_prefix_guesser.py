@@ -1,8 +1,21 @@
 from lxml import etree
 
+class PrefixGuessingError(Exception):
+    def __init__(self, e):
+        self.inner = e
+        self.message = "An error occurred while guess prefixes: {0}".format(
+                e.message)
+
 def guess_prefixes(xml):
+    try:
+        return _guess_prefixes(xml)
+    except Exception as e:
+        wrapped = PrefixGuessingError(e)
+        raise wrapped
+
+def _guess_prefixes(xml):
     """Attempt to create a rough prefix -> url mapping based on an input XML.
-    The tree is traversed breadth first, and the first node to define the
+    The tree is traversed depth first, and the first node to define the
     prefix 'claims' it with URL assosciated with that prefix in that node.
     The first prefixless namespace found is given the prefix 'default'. """
 

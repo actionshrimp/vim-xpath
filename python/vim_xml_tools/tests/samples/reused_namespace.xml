@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root>
+    <ns:A xmlns:ns="http://firsturl.org"/>
+    <ns:B xmlns:ns="http://secondurl.org"/>
+    <C>
+        <another:D xmlns:another="http://thirdurl.org"/>
+    </C>
+    <another:E xmlns:another="http://fourthurl.org"/>
+</Root>

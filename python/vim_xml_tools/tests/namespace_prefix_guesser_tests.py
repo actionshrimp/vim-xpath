@@ -18,3 +18,21 @@ class NamespacePrefixGuesserTests(unittest.TestCase):
 
         self.assertEqual("http://someurl.org", prefixes["default"])
         self.assertEqual("http://anotherurl.org", prefixes["ns"])
+
+    def test_first_node_to_define_prefix_claims_it(self):
+        xml = read_sample_xml("reused_namespace.xml")
+        prefixes = namespace_prefix_guesser.guess_prefixes(xml)
+
+        self.assertEqual("http://firsturl.org", prefixes["ns"])
+
+    def test_first_node_depth_first_to_define_prefix_claims_it(self):
+        xml = read_sample_xml("reused_namespace.xml")
+        prefixes = namespace_prefix_guesser.guess_prefixes(xml)
+
+        self.assertEqual("http://thirdurl.org", prefixes["another"])
+
+    def test_malformed_xml_throws_error(self):
+        xml = read_sample_xml("malformed.xml")
+
+        with self.assertRaises(namespace_prefix_guesser.PrefixGuessingError):
+            prefixes = namespace_prefix_guesser.guess_prefixes(xml)
