@@ -90,3 +90,13 @@ class VimAdaptorTests(unittest.TestCase):
     def test_empty_buffer(self):
         self.stub_vim_buffer(0, "")
         a.evaluate_xpath(0, 0, "//*")
+
+    def test_guess_prefixes(self):
+        test_xml = "<Root><ns:Tag xmlns:ns='http://testprefixes.org'/></Root>"
+        self.stub_vim_buffer(0, test_xml)
+
+        a.guess_prefixes(0)
+
+        self.assertEqual('let b:ns_prefixes = {' +
+                        '"ns": "http://testprefixes.org",}',
+                        VimModuleStub.evaluated[0])

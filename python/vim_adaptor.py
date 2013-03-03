@@ -5,6 +5,7 @@ except ImportError:
     vim = None
     
 from vim_xml_tools import xpath as x
+from vim_xml_tools import namespace_prefix_guesser as g
 from vim_xml_tools.exceptions import XmlToolsError
 
 VARIABLE_SCOPE = "s:"
@@ -28,6 +29,18 @@ def evaluate_xpath(bufnr, winnr, xpath):
             loc_list.add_error_entry('No results returned')
     except XmlToolsError as e:
         loc_list.add_error_entry(e.message)
+
+def guess_prefixes(bufnr):
+    xml = get_buffer_string(bufnr)
+    prefixes = g.guess_prefixes(xml)
+
+    outstr = "let b:ns_prefixes = {"
+    for prefix in prefixes:
+        outstr += '"{0}": "{1}",'.format(prefix, prefixes[prefix])
+
+    outstr += "}"
+
+    vim.eval(outstr)
 
 class VimLocListAdaptor(object):
 
