@@ -18,8 +18,62 @@ execute "py sys.argv = ['" . s:pyfile . "']"
 execute "pyfile " . s:pyfile
 
 command XPathSearchPrompt :call XPathSearchPrompt()
+command XPathGuessPrefixes :call XPathGuessPrefixes()
+command XPathShowPrefixes :call XPathShowBufferPrefixes()
+
+function! XPathGuessPrefixes()
+    let l:active_window = winnr()
+    let l:active_buffer = winbufnr(l:active_window)
+
+    execute "py vim_adaptor.guess_prefixes(" . l:active_buffer . ")"
+    call XPathSetBufferPrefixes(l:ns_prefixes)
+endf
+
+function! XPathSetBufferPrefixes(ns_prefixes)
+    if !exists("g:ns_prefixes")
+        let b:ns_prefixes = a:ns_prefixes
+    else
+        let b:ns_prefixes = copy(g:ns_prefixes)
+        for prefix in keys(a:ns_prefixes)
+            "Global prefixes always 'win'
+            if !has_prefix(b:ns_prefixes, prefix)
+                let b:ns_prefixes[prefix] = a:ns_prefixes[prefix]
+            else
+                let b:ns_prefixes[prefix . "_buf"] = a:ns_prefixes[prefix]
+            endif
+        endfor
+    endif
+endf
+
+function! XPathShowBufferPrefixes()
+    let l:ns_prefixes = s:XPathGetBufferPrefixes()
+
+    let l:loclist = []
+    for key in keys(l:ns_prefixes)
+        let l:entry = {'text': key . ': ' . l:ns_prefixes[key]}
+        let l:loclist += [l:entry]
+    endfor
+
+    call setloclist(winnr(), l:loclist)
+endf
+
+function! s:XPathGetBufferPrefixes()
+    let l:ns_prefixes = {}
+    if exists("g:ns_prefixes")
+        let l:ns_prefixes = g:ns_prefixes
+    endif
+    if exists("b:ns_prefixes")
+        let l:ns_prefixes = b:ns_prefixes
+    endif
+
+    return l:ns_prefixes
+endf
 
 function! XPathSearchPrompt()
+
+    if !exists("b:ns_prefixes")
+        call XPathGuessPrefixes()
+    endif
 
     let l:active_window = winnr()
     let l:active_buffer = winbufnr(l:active_window)
@@ -37,7 +91,7 @@ function! XPathSearchPrompt()
     let l:search_window = winnr()
     let l:search_buffer = winbufnr(l:search_window)
 
-    setlocal updatetime=100
+    setlocal updatetime=200
     execute "au CursorHold,CursorHoldI <buffer> :silent call " .
         \ "<SID>XPathChanged(" .
         \ l:search_buffer . ", " .
@@ -98,11 +152,13 @@ endf
 
 "Evaluate an XPath via the python vim adaptor
 function! s:XPathEvaluate(xpath, active_buffer, active_window)
+    let l:ns_prefixes = getbufvar(a:active_buffer, "ns_prefixes")
     let l:xpath = escape(a:xpath, "'")
     execute "py vim_adaptor.evaluate_xpath(" .
         \ a:active_buffer . ", " .
         \ a:active_window . ", " .
-        \ "'" . l:xpath . "')"
+        \ "'" . l:xpath . "', " .
+        \ string(l:ns_prefixes) . ")"
 endf
 
 function! XPathHistoryPopup()

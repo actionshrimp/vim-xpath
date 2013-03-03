@@ -18,14 +18,19 @@ class VimModuleCurrentStub(object):
 class VimModuleStub(object):
 
     evaluated = []
+    commanded = []
     
     def __init__(self):
         self.current = VimModuleCurrentStub()
         self.buffers = {}
         VimModuleStub.evaluated = []
+        VimModuleStub.commanded = []
         
-    def eval(self, vim_command):
-        VimModuleStub.evaluated.append(vim_command)
+    def eval(self, vim_expr):
+        VimModuleStub.evaluated.append(vim_expr)
+
+    def command(self, vim_command):
+        VimModuleStub.commanded.append(vim_command)
 
 class VimAdaptorTests(unittest.TestCase):
 
@@ -97,9 +102,9 @@ class VimAdaptorTests(unittest.TestCase):
 
         a.guess_prefixes(0)
 
-        self.assertEqual('let b:ns_prefixes = {' +
+        self.assertEqual('let l:ns_prefixes = {' +
                         '"ns": "http://testprefixes.org",}',
-                        VimModuleStub.evaluated[0])
+                        VimModuleStub.commanded[0])
 
     def test_guess_prefixes_error(self):
         test_xml = "<Some><Malformed><Rubbish></Some>"
@@ -109,4 +114,4 @@ class VimAdaptorTests(unittest.TestCase):
 
         self.assertIn(
                 'echo "An error occurred while guessing namespace prefixes:', 
-                VimModuleStub.evaluated[0])
+                VimModuleStub.commanded[0])

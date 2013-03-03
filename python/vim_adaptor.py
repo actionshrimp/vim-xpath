@@ -14,14 +14,14 @@ def get_buffer_string(bufnr):
     buffer = vim.buffers[bufnr-1]
     return "\n".join(buffer)
 
-def evaluate_xpath(bufnr, winnr, xpath):
+def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):
     loc_list = VimLocListAdaptor(bufnr, winnr)
     loc_list.clear_current_list()
     
     xml = get_buffer_string(bufnr)
 
     try:
-        results = x.evaluate(xml, xpath, {})
+        results = x.evaluate(xml, xpath, ns_prefixes)
         if len(results) > 0:
             for result in results:
                 loc_list.add_result_entry(result)
@@ -35,15 +35,15 @@ def guess_prefixes(bufnr):
         xml = get_buffer_string(bufnr)
         prefixes = g.guess_prefixes(xml)
 
-        outstr = "let b:ns_prefixes = {"
+        outstr = "let l:ns_prefixes = {"
         for prefix in prefixes:
             outstr += '"{0}": "{1}",'.format(prefix, prefixes[prefix])
 
         outstr += "}"
 
-        vim.eval(outstr)
+        vim.command(outstr)
     except Exception as e:
-        vim.eval('echo "{0}"'.format(e.message))
+        vim.command('echo "{0}"'.format(e.message))
 
 class VimLocListAdaptor(object):
 
