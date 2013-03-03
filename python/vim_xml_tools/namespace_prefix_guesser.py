@@ -3,8 +3,8 @@ from lxml import etree
 class PrefixGuessingError(Exception):
     def __init__(self, e):
         self.inner = e
-        self.message = "An error occurred while guess prefixes: {0}".format(
-                e.message)
+        self.message = "An error occurred while guessing namespace prefixes: "\
+            + "{0}".format(e.message)
 
 def guess_prefixes(xml):
     try:

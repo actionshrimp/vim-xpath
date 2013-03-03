@@ -31,16 +31,19 @@ def evaluate_xpath(bufnr, winnr, xpath):
         loc_list.add_error_entry(e.message)
 
 def guess_prefixes(bufnr):
-    xml = get_buffer_string(bufnr)
-    prefixes = g.guess_prefixes(xml)
+    try:
+        xml = get_buffer_string(bufnr)
+        prefixes = g.guess_prefixes(xml)
 
-    outstr = "let b:ns_prefixes = {"
-    for prefix in prefixes:
-        outstr += '"{0}": "{1}",'.format(prefix, prefixes[prefix])
+        outstr = "let b:ns_prefixes = {"
+        for prefix in prefixes:
+            outstr += '"{0}": "{1}",'.format(prefix, prefixes[prefix])
 
-    outstr += "}"
+        outstr += "}"
 
-    vim.eval(outstr)
+        vim.eval(outstr)
+    except Exception as e:
+        vim.eval('echo "{0}"'.format(e.message))
 
 class VimLocListAdaptor(object):
 

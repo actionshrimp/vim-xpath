@@ -100,3 +100,13 @@ class VimAdaptorTests(unittest.TestCase):
         self.assertEqual('let b:ns_prefixes = {' +
                         '"ns": "http://testprefixes.org",}',
                         VimModuleStub.evaluated[0])
+
+    def test_guess_prefixes_error(self):
+        test_xml = "<Some><Malformed><Rubbish></Some>"
+        self.stub_vim_buffer(0, test_xml)
+
+        a.guess_prefixes(0)
+
+        self.assertIn(
+                'echo "An error occurred while guessing namespace prefixes:', 
+                VimModuleStub.evaluated[0])
