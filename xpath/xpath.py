@@ -439,8 +439,11 @@ class XPathParseErrorResult(XPathErrorResult):
 
   def first_group_match(self, pattern, text):
     search = re.search(pattern, text)
-    groups = search.groups()
-    return groups[0]
+    if search is not None:
+      groups = search.groups()
+      return groups[0]
+    else:
+      return None
 
 class XPathSearchErrorResult(XPathErrorResult):
   def __init__(self, error, xpath):
