@@ -98,10 +98,10 @@ function! XPathSearchPrompt()
         \ l:active_buffer . ", " .
         \ l:active_window . ")"
 
-    execute "au CompleteDone <buffer> :silent call <SID>XPathChanged(" .
-        \ l:search_buffer . ", " .
-        \ l:active_buffer . ", " .
-        \ l:active_window . ")"
+"    execute \"au CompleteDone <buffer> :silent call <SID>XPathChanged(\" .
+"        \ l:search_buffer . \", \" .
+"        \ l:active_buffer . \", \" .
+"        \ l:active_window . \")\"
 
     execute "au BufLeave <buffer> :silent call XPathComplete(" .
         \ l:search_buffer . ", " .
