@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<response>
+  <download>
+    <lockerReleases>
+      <lockerRelease>
+        <release id="2191201">
+          <title>Comedown Machine</title>
+          <version/>
+          <type>Album</type>
+          <barcode>883870073066</barcode>
+          <artist id="617">
+            <name>The Strokes</name>
+            <appearsAs>The Strokes</appearsAs>
+            <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+          </artist>
+          <url>http://www.7digital.com/artists/the-strokes/comedown-machine/?partner=3923</url>
+          <image>http://cdn.7static.com/static/img/sleeveart/00/021/912/0002191201_50.jpg</image>
+          <releaseDate>2013-03-25T00:00:00Z</releaseDate>
+        </release>
+        <lockerTracks>
+          <lockerTrack>
+            <track id="23590556">
+              <title>Tap Out</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>1</trackNumber>
+              <duration>222</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/01-Tap-Out?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+          <lockerTrack>
+            <track id="23590559">
+              <title>All the Time</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>2</trackNumber>
+              <duration>181</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/02-All-the-Time?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+          <lockerTrack>
+            <track id="23590562">
+              <title>One Way Trigger</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>3</trackNumber>
+              <duration>242</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/03-One-Way-Trigger?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+          <lockerTrack>
+            <track id="23590564">
+              <title>Welcome to Japan</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>4</trackNumber>
+              <duration>230</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/04-Welcome-to-Japan?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+          <lockerTrack>
+            <track id="23590567">
+              <title>80's Comedown Machine</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>5</trackNumber>
+              <duration>298</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/05-80s-Comedown-Machine?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+          <lockerTrack>
+            <track id="23590571">
+              <title>50/50</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>6</trackNumber>
+              <duration>163</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/06-50-50?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+          <lockerTrack>
+            <track id="23590572">
+              <title>Slow Animals</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>7</trackNumber>
+              <duration>260</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/07-Slow-Animals?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+          <lockerTrack>
+            <track id="23590575">
+              <title>Partners in Crime</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>8</trackNumber>
+              <duration>201</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/08-Partners-in-Crime?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+          <lockerTrack>
+            <track id="23590578">
+              <title>Chances</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>9</trackNumber>
+              <duration>216</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/09-Chances?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+          <lockerTrack>
+            <track id="23590581">
+              <title>Happy Ending</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>10</trackNumber>
+              <duration>172</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/10-Happy-Ending?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+          <lockerTrack>
+            <track id="23590583">
+              <title>Call It Fate, Call It Karma</title>
+              <version/>
+              <artist id="617">
+                <name>The Strokes</name>
+                <appearsAs>The Strokes</appearsAs>
+                <url>http://www.7digital.com/artists/the-strokes/?partner=3923</url>
+              </artist>
+              <trackNumber>11</trackNumber>
+              <duration>204</duration>
+              <url>http://www.7digital.com/artists/the-strokes/comedown-machine/11-Call-It-Fate-Call-It-Karma?partner=3923&amp;partner=3923</url>
+            </track>
+            <remainingDownloads>5</remainingDownloads>
+            <purchaseDate>2013-04-03T16:37:11+01:00</purchaseDate>
+          </lockerTrack>
+        </lockerTracks>
+      </lockerRelease>
+    </lockerReleases>
+  </download>
+</response>
