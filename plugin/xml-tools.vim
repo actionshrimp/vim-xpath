@@ -4,6 +4,10 @@ if exists("g:loaded_xml_tools")
 endif
 let g:loaded_xml_tools = 1
 
+if !has("python")
+    echo 'vim-xpath requires vim to be compiled with python support, and python to be installed'
+endif
+
 "Load the vim adaptor python script
 let s:curfile = expand("<sfile>")
 let s:curfiledir = fnamemodify(s:curfile, ":h")
