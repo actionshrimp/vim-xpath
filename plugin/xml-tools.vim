@@ -6,6 +6,7 @@ let g:loaded_xml_tools = 1
 
 if !has("python")
     echo 'vim-xpath requires vim to be compiled with python support, and python to be installed'
+    echo 'to stop this message from appearing, either uninstall the plugin, or "let g:loaded_xml_tools = 1" in your vimrc'
     finish
 endif
 
