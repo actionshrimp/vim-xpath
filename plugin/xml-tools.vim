@@ -6,6 +6,7 @@ let g:loaded_xml_tools = 1
 
 if !has("python")
     echo 'vim-xpath requires vim to be compiled with python support, and python to be installed'
+    finish
 endif
 
 "Load the vim adaptor python script
