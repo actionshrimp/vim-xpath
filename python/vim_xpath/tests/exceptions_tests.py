@@ -1,7 +1,7 @@
 import unittest
 from lxml import etree
 
-from vim_xml_tools.exceptions import *
+from vim_xpath.exceptions import *
 
 class ExceptionsTests(unittest.TestCase):
 

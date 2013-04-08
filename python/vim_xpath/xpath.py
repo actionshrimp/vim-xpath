@@ -1,7 +1,7 @@
 import re
 
 from lxml import etree
-from vim_xml_tools.exceptions import from_lxml_exception
+from vim_xpath.exceptions import from_lxml_exception
 
 LIBXML2_MAX_LINE = 65534
 

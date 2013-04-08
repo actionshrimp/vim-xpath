@@ -4,9 +4,9 @@ try:
 except ImportError:
     vim = None
     
-from vim_xml_tools import xpath as x
-from vim_xml_tools import namespace_prefix_guesser as g
-from vim_xml_tools.exceptions import XmlToolsError
+from vim_xpath import xpath as x
+from vim_xpath import namespace_prefix_guesser as g
+from vim_xpath.exceptions import XmlToolsError
 
 VARIABLE_SCOPE = "s:"
 

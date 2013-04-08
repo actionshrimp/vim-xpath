@@ -2,8 +2,8 @@ import unittest
 
 from helpers.file_helpers import read_sample_xml
 
-from vim_xml_tools import xpath
-from vim_xml_tools.exceptions import XPathError, XPathNamespaceUndefinedError
+from vim_xpath import xpath
+from vim_xpath.exceptions import XPathError, XPathNamespaceUndefinedError
 
 class XPathTests(unittest.TestCase):
 
