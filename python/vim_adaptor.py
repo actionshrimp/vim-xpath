@@ -63,9 +63,10 @@ class VimLocListAdaptor(object):
 
         text = result["match"]
         if result["value"] != "":
-            text += ": {0}".format(result["value"])
+            val = result["value"].replace("\"", "\\\"")
+            text += ": {0}".format(val)
 
-        text_arg = "'text': '{0}', ".format(text)
+        text_arg = "'text': \"{0}\", ".format(text)
 
         vim.eval(("setloclist({0}, [{{{1}}}], 'a')"
                  ).format(self.winnr, bufnr_arg + lnum_arg + text_arg))
@@ -74,6 +75,6 @@ class VimLocListAdaptor(object):
         vim.eval(("setloclist({0}, [{{" +
                   "'bufnr': {1}, " +
                   "'type': 'E', " +
-                  "'text': '{2}'" +
+                  "'text': \"{2}\"" +
                   "}}], 'a')"
                  ).format(self.winnr, self.bufnr, error_text))

@@ -55,14 +55,14 @@ class VimAdaptorTests(unittest.TestCase):
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 0, " +
                          "'lnum': 2, " +
-                         "'text': '<Tag>', " +
+                         "'text': \"<Tag>\", " +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
         
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 0, " +
                          "'lnum': 3, " +
-                         "'text': '<Tag>', " +
+                         "'text': \"<Tag>\", " +
                          "}], 'a')",
                          VimModuleStub.evaluated[2])
 
@@ -75,8 +75,8 @@ class VimAdaptorTests(unittest.TestCase):
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 0, " +
                          "'type': 'E', " +
-                         "'text': 'XPath evaluation error: " + 
-                         "undefined namespace prefix'" +
+                         "'text': \"XPath evaluation error: " + 
+                         "undefined namespace prefix\"" +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
 
@@ -88,7 +88,7 @@ class VimAdaptorTests(unittest.TestCase):
 
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 0, " +
-                         "'text': 'string: test string', " +
+                         "'text': \"string: test string\", " +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
 
@@ -115,3 +115,24 @@ class VimAdaptorTests(unittest.TestCase):
         self.assertIn(
                 'echo "An error occurred while guessing namespace prefixes:', 
                 VimModuleStub.commanded[0])
+
+    def test_escaping_in_evaluation_result(self):
+        test_xml = "<Root><Tag>With apo's in result</Tag>"
+        test_xml += "<Tag>\"and some quotes\"</Tag></Root>"
+        self.stub_vim_buffer(0, test_xml)
+
+        a.evaluate_xpath(0, 0, "//Tag")
+
+        self.assertEqual("setloclist(0, [{" +
+                         "'bufnr': 0, " +
+                         "'lnum': 1, " +
+                         "'text': \"<Tag>: With apo's in result\", " +
+                         "}], 'a')",
+                         VimModuleStub.evaluated[1])
+
+        self.assertEqual("setloclist(0, [{" +
+                         "'bufnr': 0, " +
+                         "'lnum': 1, " +
+                         "'text': \"<Tag>: \\\"and some quotes\\\"\", " +
+                         "}], 'a')",
+                         VimModuleStub.evaluated[2])
