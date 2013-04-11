@@ -1,12 +1,31 @@
 "Prevent script from being loaded multiple times
-if exists("g:loaded_xpath")
+if exists("g:skip_xpath")
     finish
 endif
-let g:loaded_xpath = 1
 
+"Check python is installed
 if !has("python")
-    echo 'vim-xpath requires vim to be compiled with python support, and python to be installed. '
-                \ . 'To stop this message from appearing, either uninstall the plugin or add the line "let g:loaded_xpath = 1" to your vimrc'
+    echo 'vim-xpath requires vim to be compiled with python support, and '
+                \ . 'python to be installed. To stop this message from '
+                \ . 'appearing, either install python, uninstall this plugin '
+                \ . 'or add the line "let g:skip_xpath = 1" to your vimrc.'
+    finish
+endif
+
+"Check python lxml library is installed
+py << EOF
+import vim
+try:
+    import lxml
+except ImportError:
+    vim.command('let s:no_lxml = 1')
+EOF
+
+if s:no_lxml
+    echo 'vim-xpath requires the lxml python library (http://lxml.de) to be '
+                \ . 'installed. To stop this message from appearing, either '
+                \ . 'install lxml, uninstall this plugin or add the line '
+                \ . '"let g:skip_xpath = 1" to your vimrc.'
     finish
 endif
 
@@ -23,9 +42,9 @@ py import sys
 execute "py sys.argv = ['" . s:pyfile . "']"
 execute "pyfile " . s:pyfile
 
-command XPathSearchPrompt :call XPathSearchPrompt()
-command XPathGuessPrefixes :call XPathGuessPrefixes()
-command XPathShowPrefixes :call XPathShowBufferPrefixes()
+command! XPathSearchPrompt :call XPathSearchPrompt()
+command! XPathGuessPrefixes :call XPathGuessPrefixes()
+command! XPathShowPrefixes :call XPathShowBufferPrefixes()
 
 function! XPathGuessPrefixes()
     let l:active_window = winnr()
