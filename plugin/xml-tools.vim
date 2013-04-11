@@ -13,6 +13,8 @@ if !has("python")
 endif
 
 "Check python lxml library is installed
+let s:no_lxml = 0
+
 py << EOF
 import vim
 try:
