@@ -3,7 +3,6 @@ python:
   - "2.7"
 before_install:
   - "git clone https://github.com/kana/vim-vspec.git ./.vim/vim-vspec"
-  - "pip install -q -r .python-requirements"
 script:
   - "nosetests python" #run the python tests
   - "./.vim/vim-vspec/bin/vspec . .vim/vim-vspec ./t/vim-xpath-tests.vim" #run the vspec tests
