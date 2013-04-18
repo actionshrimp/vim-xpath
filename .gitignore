@@ -38,4 +38,8 @@ nosetests.xml
 *.swp
 *.swo
 
+Gemfile.lock
+VimFlavor.lock
+.vim-flavor
+
 doc/tags
