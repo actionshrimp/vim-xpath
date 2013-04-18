@@ -2,7 +2,7 @@ language: python
 python:
   - "2.7"
   - "3.2"
-before_install: "sudo apt-get install -qq cython libxml2 libxslt1"
+before_install: "sudo apt-get install cython libxml2 libxslt1"
 install: 
   - "bundle install"
   - "pip install -r .python-requirements"
