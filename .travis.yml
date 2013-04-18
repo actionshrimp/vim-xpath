@@ -1,3 +1,11 @@
-language: ruby
-rvm: 1.9.3
-before_script: "rake dump"
+language: python
+python:
+  - "2.7"
+  - "3.2"
+install: 
+  - "bundle install"
+  - "pip install -r requirements.txt"
+before_script: "rake dump" #output vim version
+script:
+  - "nosetests python" #run the python tests
+  - "rake test" #run the vspec tests
