@@ -11,6 +11,7 @@ Check the build status to see if the current version is usable - although the
 tests are still being setup to work with Travis correctly.
 
 Features of the rewrite:
+- [✔] Proper namespace support
 - [✔] Use the loclist instead of a custom output buffer, for more standard vim
   behavior
 - [✔] Handle line numbers on large XML files correctly
