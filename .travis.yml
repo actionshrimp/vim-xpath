@@ -2,6 +2,7 @@ language: python
 python:
   - "2.7"
   - "3.2"
+before_install: "sudo apt-get install -qq cython"
 install: 
   - "bundle install"
   - "pip install -r .python-requirements"
