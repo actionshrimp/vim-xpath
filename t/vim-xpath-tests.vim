@@ -1,3 +1,4 @@
+version
 runtime! plugin/vim-xpath.vim
 
 describe 'vim-xpath'
