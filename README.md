@@ -1,15 +1,20 @@
 XPath search (and incidental XML validation) plugin for vim.
 
+DEPRICATION WARNING
+-------------------
+
+This plugin is currently being rewritten. Take a look at the 'rewrite' branch for a list of features. The rewrite branch will eventually be merged into master.
+
 When editing an XML file, you can use the :XPathSearchPrompt command to enter XPath search mode. Begin typing your xpath, and press TAB for context-sensitive xpath completion.
 A new results window will pop up beneath the current window, with results matching your XPath, or if the XML file is not valid, the position of the validation error.
 Hitting enter jumps to the results window, and then hitting enter on one of the results jumps to the line in your XML file that matched (or the position of the error).
 
 Requires:
--Vim with python support
--python lxml library installed (ideally 2.7 or higher)
+- Vim with python support
+- python lxml library installed (ideally 2.7 or higher)
 
 To install:
--Place all files into your vimXX or .vim directory
--Load the vimdoc with :helptags <path-to-your-vim-dir>/doc
+- Place all files into your vimXX or .vim directory
+- Load the vimdoc with :helptags <path-to-your-vim-dir>/doc
 Alternatively:
--Install as a bundle with the excellent pathogen plugin
+- Install as a bundle with the excellent pathogen plugin
