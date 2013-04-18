@@ -1,12 +1,10 @@
 language: python
 python:
   - "2.7"
-  - "3.2"
-before_install: "sudo apt-get install cython libxml2 libxslt1"
-install: 
-  - "bundle install"
-  - "pip install -r .python-requirements"
-before_script: "rake dump" #output vim version
+before_install:
+  - "sudo apt-get install cython libxml2 libxslt"
+  - "git clone https://github.com/kana/vim-vspec.git ./.vim/vim-vspec"
+  - "pip install -r ./t/.python-requirements"
 script:
   - "nosetests python" #run the python tests
-  - "rake test" #run the vspec tests
+  - "./.vim/vim-vspec/bin/vspec . .vim/vim-vspec ./vim-xpath-tests.vim" #run the vspec tests
