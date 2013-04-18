@@ -6,4 +6,4 @@ before_install:
   - "pip install -q -r .python-requirements"
 script:
   - "nosetests python" #run the python tests
-  - "./.vim/vim-vspec/bin/vspec . .vim/vim-vspec ./vim-xpath-tests.vim" #run the vspec tests
+  - "./.vim/vim-vspec/bin/vspec . .vim/vim-vspec ./t/vim-xpath-tests.vim" #run the vspec tests
