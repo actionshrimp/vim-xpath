@@ -37,11 +37,14 @@ def run_vspec_tests():
         output = subprocess.check_output(cmd)
 
         passed, run = get_vspec_pass_fail(output)
-        output = colourize_vspec_output(output)
+        output = format_vspec_output(output)
+        print output
 
         if run != '?':
             total_passed += int(passed)
             total_run += int(run)
+
+    print
 
     if total_passed == total_run:
         vim_success = True
@@ -53,19 +56,25 @@ def run_vspec_tests():
     return vim_success
 
 
-def colourize_vspec_output(output):
+def format_vspec_output(output):
     output_lines = output.split('\n')
-    colourized_lines = []
-    for line in output_lines:
-        c_line = line
+    formatted_lines = []
+
+    for line in output_lines[:-2]:
+        f_line = line
+
         if line.startswith("ok"):
-            c_line = OKGREEN + line + ENDC
+            f_line = OKGREEN + f_line + ENDC
+
         if line.startswith("not ok"):
-            c_line = FAIL + line + ENDC
+            f_line = FAIL + f_line + ENDC
 
-        colourized_lines.append(c_line)
+        if line.startswith("#"):
+            f_line = FAIL + "    " + line[1:] + ENDC
 
-    return '\n'.join(colourized_lines)
+        formatted_lines.append(f_line)
+
+    return '\n'.join(formatted_lines)
 
 def get_vspec_pass_fail(output):
     output_lines = output.split('\n')
