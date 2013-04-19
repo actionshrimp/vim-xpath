@@ -113,7 +113,7 @@ class VimAdaptorTests(unittest.TestCase):
         a.guess_prefixes(0)
 
         self.assertIn(
-                'echo "An error occurred while guessing namespace prefixes:', 
+                'throw "An error occurred while guessing namespace prefixes:', 
                 VimModuleStub.commanded[0])
 
     def test_escaping_in_evaluation_result(self):

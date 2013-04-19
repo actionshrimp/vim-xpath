@@ -4,5 +4,4 @@ python:
 before_install:
   - "bundle install"
 script:
-  - "nosetests python" #run the python tests
-  - "bundle exec vim-flavor test"
+  - "rake" #run the python and vspec tests
