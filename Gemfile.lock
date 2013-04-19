@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/actionshrimp/vim-flavor.git
+  revision: 9371f63b62797c92032556ab6c78d05595a738b4
+  specs:
+    vim-flavor (1.1.2)
+      parslet (~> 1.0)
+      thor (~> 0.14)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -5,12 +13,9 @@ GEM
     parslet (1.5.0)
       blankslate (~> 2.0)
     thor (0.18.1)
-    vim-flavor (1.1.2)
-      parslet (~> 1.0)
-      thor (~> 0.14)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  vim-flavor
+  vim-flavor!
