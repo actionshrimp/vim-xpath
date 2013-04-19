@@ -1,3 +1,4 @@
+runtime! tests/support/virtualenv.vim
 runtime! plugin/vim-xpath.vim
 
 describe 'vim-xpath'
