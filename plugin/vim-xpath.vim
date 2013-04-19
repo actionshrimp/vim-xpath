@@ -52,8 +52,11 @@ function! XPathGuessPrefixes()
     let l:active_window = winnr()
     let l:active_buffer = winbufnr(l:active_window)
 
-    execute "py vim_adaptor.guess_prefixes(" . l:active_buffer . ")"
-    call XPathSetBufferPrefixes(l:ns_prefixes)
+    try
+        execute "py vim_adaptor.guess_prefixes(" . l:active_buffer . ")"
+        call XPathSetBufferPrefixes(l:ns_prefixes)
+    catch
+    endtry
 endf
 
 function! XPathSetBufferPrefixes(ns_prefixes)
@@ -111,7 +114,7 @@ function! XPathSearchPrompt()
 
     lopen
 
-    above 1split 'XPath Search'
+    above 1split XPath\ Search
     set buftype=nofile
     setlocal noswapfile
     setlocal nonumber

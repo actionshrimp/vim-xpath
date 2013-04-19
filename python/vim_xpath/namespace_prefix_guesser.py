@@ -4,7 +4,7 @@ class PrefixGuessingError(Exception):
     def __init__(self, e):
         self.inner = e
         self.message = "An error occurred while guessing namespace prefixes: "\
-            + "{0}".format(e.message)
+           + "{0} - {1}".format(e.__class__.__name__, e.message)
 
 def guess_prefixes(xml):
     try:

@@ -43,7 +43,7 @@ def guess_prefixes(bufnr):
 
         vim.command(outstr)
     except Exception as e:
-        vim.command('echo "{0}"'.format(e.message))
+        vim.command('throw "{0}"'.format(e.message))
 
 class VimLocListAdaptor(object):
 
