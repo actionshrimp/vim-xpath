@@ -2,6 +2,6 @@ language: python
 python:
   - "2.7"
 before_install:
-  - "bundle install"
+  - "git clone https://github.com/kana/vim-vspec deps/vim-vspec"
 script:
-  - "rake" #run the python and vspec tests
+  - "./runtests"

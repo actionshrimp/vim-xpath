@@ -39,7 +39,7 @@ nosetests.xml
 *.swo
 
 .vim
-VimFlavor.lock
-.vim-flavor
 
 doc/tags
+
+deps
