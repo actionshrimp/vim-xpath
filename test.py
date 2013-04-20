@@ -32,7 +32,12 @@ def run_vspec_tests():
                './deps/vim-vspec', '.',
                name]
 
-        output = subprocess.check_output(cmd)
+        try:
+            output = subprocess.check_output(cmd)
+        except Exception as e:
+            print e
+            raise
+
 
         passed, run = get_vspec_pass_fail(output)
         output = format_vspec_output(output)
