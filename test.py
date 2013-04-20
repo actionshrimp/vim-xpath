@@ -7,21 +7,14 @@ import re
 import glob
 import subprocess
 
-OKGREEN = '\033[92m'
-FAIL = '\033[91m'
-ENDC = '\033[0m'
-OKGREEN = ''
-FAIL = ''
-ENDC = ''
-
 def run_python_tests():
     loader = nose.loader.TestLoader(workingDir='python')
     python_success = nose.run(testLoader=loader)
 
     if (python_success):
-        print OKGREEN + 'All python tests passed' + ENDC
+        print 'All python tests passed'
     else:
-        print FAIL + 'Python tests failed' + ENDC
+        print 'Python tests failed'
 
     return python_success
 
@@ -55,10 +48,10 @@ def run_vspec_tests():
 
     if total_passed == total_run:
         vim_success = True
-        print OKGREEN + 'All {0} vspec tests passed'.format(total_passed) + ENDC
+        print 'All {0} vspec tests passed'.format(total_passed)
     else:
         failed = total_run - total_passed
-        print FAIL + '{0} of {1} vspec tests failed'.format(failed, total_run) + ENDC
+        print '{0} of {1} vspec tests failed'.format(failed, total_run)
 
     return vim_success
 
@@ -71,13 +64,13 @@ def format_vspec_output(output):
         f_line = line
 
         if line.startswith("ok"):
-            f_line = OKGREEN + f_line + ENDC
+            f_line = f_line
 
         if line.startswith("not ok"):
-            f_line = FAIL + f_line + ENDC
+            f_line = f_line
 
         if line.startswith("#"):
-            f_line = FAIL + "    " + line[1:] + ENDC
+            f_line = "    " + line[1:]
 
         formatted_lines.append(f_line)
 
@@ -98,23 +91,15 @@ if __name__ == '__main__':
     print 
     vspec_success = run_vspec_tests()
 
-    total_success = (python_success and vspec_success)
-    if (total_success):
-        print OKGREEN
-    else:
-        print FAIL
-
     print "-------------------------------"
 
     if (not python_success and not vspec_success):
-        sys.exit("Python and vspec tests failed" + ENDC)
+        sys.exit("Python and vspec tests failed")
 
     if (not python_success):
-        sys.exit("Python tests failed" + ENDC)
+        sys.exit("Python tests failed")
 
     if (not vspec_success):
-        sys.exit("vspec tests failed" + ENDC)
-
-    print ENDC
+        sys.exit("vspec tests failed")
 
     sys.exit()
