@@ -10,6 +10,9 @@ import subprocess
 OKGREEN = '\033[92m'
 FAIL = '\033[91m'
 ENDC = '\033[0m'
+OKGREEN = ''
+FAIL = ''
+ENDC = ''
 
 def run_python_tests():
     loader = nose.loader.TestLoader(workingDir='python')
