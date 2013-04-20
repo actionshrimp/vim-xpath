@@ -2,9 +2,9 @@ language: python
 python:
   - "2.7"
 before_install:
-    "echo This is the virtualenv"
-    "echo $VIRTUAL_ENV"
-    "echo :-o"
+  - "echo This is the virtualenv"
+  - "echo $VIRTUAL_ENV"
+  - "echo :-o"
   - "git clone https://github.com/kana/vim-vspec deps/vim-vspec"
 script:
   - "python test.py"
