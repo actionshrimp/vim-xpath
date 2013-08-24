@@ -3,7 +3,7 @@ import unittest
 from helpers.file_helpers import read_sample_xml
 
 from vim_xpath import xpath
-from vim_xpath.exceptions import XPathError, XPathNamespaceUndefinedError
+from vim_xpath.exceptions import XPathError, BufferXmlError
 
 class XPathTests(unittest.TestCase):
 
@@ -95,7 +95,7 @@ class XPathTests(unittest.TestCase):
     def test_undefined_namespace_throws_wrapped_exception(self):
         xml = read_sample_xml("simple.xml")
 
-        with self.assertRaises(XPathNamespaceUndefinedError):
+        with self.assertRaises(XPathError):
             xpath.evaluate(xml, "//blarg:Tag")
 
     def test_bad_xpath_throws_wrapped_exception(self):
@@ -103,3 +103,9 @@ class XPathTests(unittest.TestCase):
 
         with self.assertRaises(XPathError):
             xpath.evaluate(xml, "//bla()rg")
+
+    def test_bad_buffer_throws_wrapped_exception(self):
+        xml = "<malformed"
+
+        with self.assertRaises(BufferXmlError):
+            xpath.evaluate(xml, "//xpath")

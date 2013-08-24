@@ -1,13 +1,18 @@
 from lxml import etree
 
-def from_lxml_exception(e):
+def from_lxml_parse_exception(e):
     out = e
 
     if isinstance(e, etree.ParseError):
-        out = XmlError(e)
+        out = BufferXmlError(e)
+
+    return out
+
+def from_lxml_xpath_exception(e):
+
+    out = XPathError(e)
 
     if isinstance(e, etree.XPathError):
-        out = XPathError(e)
 
         if isinstance(e, etree.XPathSyntaxError):
             out = XPathSyntaxError(e)
@@ -20,13 +25,17 @@ def from_lxml_exception(e):
 
     return out
 
+class UnknownError(Exception):
+    def __init__(self, e):
+        self.inner = e
+        self.message = "An unknown error occurred: " + e.message
 
 class XmlBaseError(Exception):
     def __init__(self, e):
         self.inner = e
         self.message = e.message
 
-class XmlError(XmlBaseError):
+class BufferXmlError(XmlBaseError):
     def __init__(self, e):
         self.inner = e
         self.message = "Error parsing XML in target buffer: " + wrap_error_message(e.message)

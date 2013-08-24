@@ -1,7 +1,7 @@
 import re
 
 from lxml import etree
-from vim_xpath.exceptions import from_lxml_exception
+from vim_xpath.exceptions import from_lxml_parse_exception, from_lxml_xpath_exception, XmlBaseError, UnknownError
 
 LIBXML2_MAX_LINE = 65534
 
@@ -9,20 +9,29 @@ def evaluate(xml, xpath, namespaces=dict()):
     try:
         results = _evaluate(xml, xpath, namespaces)
         return results
-    except etree.LxmlError as lxml_error:
-        wrapped = from_lxml_exception(lxml_error)
-        raise wrapped
+    except Exception as e:
+        if isinstance(e, XmlBaseError):
+            raise
+        else:
+            wrapped = UnknownError(e)
+            raise wrapped
 
 def _evaluate(xml, xpath, namespaces=dict(), compiled_xpath=None):
     """Evaluate an xpath against some xml. 
     Reports line numbers correctly on xml with over 65534 lines"""
 
-    tree = etree.fromstring(xml)
+    try:
+        tree = etree.fromstring(xml)
+    except Exception as e:
+        raise from_lxml_parse_exception(e)
 
-    if compiled_xpath is None:
-        compiled_xpath = etree.XPath(xpath, namespaces=namespaces)
+    try:
+        if compiled_xpath is None:
+            compiled_xpath = etree.XPath(xpath, namespaces=namespaces)
 
-    tree_matches = compiled_xpath(tree)
+        tree_matches = compiled_xpath(tree)
+    except Exception as e:
+        raise from_lxml_xpath_exception(e)
 
     if not(isinstance(tree_matches, list)):
         tree_matches = [tree_matches]

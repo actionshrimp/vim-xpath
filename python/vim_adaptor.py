@@ -27,7 +27,7 @@ def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):
                 loc_list.add_result_entry(result)
         else:
             loc_list.add_error_entry('No results returned')
-    except XmlBaseError as e:
+    except Exception as e:
         loc_list.add_error_entry(e.message)
 
 def guess_prefixes(bufnr):

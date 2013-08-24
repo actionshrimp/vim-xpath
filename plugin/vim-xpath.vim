@@ -183,7 +183,7 @@ endf
 "Evaluate an XPath via the python vim adaptor
 function! s:XPathEvaluate(xpath, active_buffer, active_window)
     let l:ns_prefixes = getbufvar(a:active_buffer, "ns_prefixes")
-    let l:xpath = escape(a:xpath, "'")
+    let l:xpath = escape(a:xpath, "'\\")
     execute "py vim_adaptor.evaluate_xpath(" .
         \ a:active_buffer . ", " .
         \ a:active_window . ", " .
