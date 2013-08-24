@@ -29,7 +29,7 @@ class XmlBaseError(Exception):
 class XmlError(XmlBaseError):
     def __init__(self, e):
         self.inner = e
-        self.message = "XML parse error: " + wrap_error_message(e.message)
+        self.message = "Error parsing XML in target buffer: " + wrap_error_message(e.message)
 
 class XPathError(XmlBaseError):
     def __init__(self, e):
