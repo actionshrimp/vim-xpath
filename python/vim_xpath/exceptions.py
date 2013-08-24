@@ -53,8 +53,7 @@ class XPathSyntaxError(XPathError):
 class XPathEvaluationError(XPathError):
     def __init__(self, e):
         self.inner = e
-        self.message = "XPath evaluation error: " + \
-                                                wrap_error_message(e.message)
+        self.message = "XPath evaluation error: " + wrap_error_message(e.message)
 
 class XPathNamespaceUndefinedError(XPathEvaluationError):
     def __init__(self, e):
