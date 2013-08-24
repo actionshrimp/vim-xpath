@@ -79,9 +79,8 @@ def format_vspec_output(output):
 def get_vspec_pass_fail(output):
     output_lines = output.split('\n')
     passed = len(filter(lambda x: x.startswith("ok "), output_lines))
+    total = len(filter(lambda x: x.startswith("ok ") or x.startswith("not ok "), output_lines))
 
-    stats_line = output_lines[-2]
-    total = stats_line.split('..')[1]
     return passed, total
 
 if __name__ == '__main__':
