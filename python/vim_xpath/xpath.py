@@ -7,19 +7,22 @@ LIBXML2_MAX_LINE = 65534
 
 def evaluate(xml, xpath, namespaces=dict()):
     try:
-        compiled = etree.XPath(xpath, namespaces=namespaces)
-        results = _evaluate(xml, compiled, namespaces)
+        results = _evaluate(xml, xpath, namespaces)
         return results
     except etree.LxmlError as lxml_error:
         wrapped = from_lxml_exception(lxml_error)
         raise wrapped
 
-def _evaluate(xml, xpath, namespaces=dict()):
-    """Evaluate a compiled xpath against some xml. 
+def _evaluate(xml, xpath, namespaces=dict(), compiled_xpath=None):
+    """Evaluate an xpath against some xml. 
     Reports line numbers correctly on xml with over 65534 lines"""
 
     tree = etree.fromstring(xml)
-    tree_matches = xpath(tree)
+
+    if compiled_xpath is None:
+        compiled_xpath = etree.XPath(xpath, namespaces=namespaces)
+
+    tree_matches = compiled_xpath(tree)
 
     if not(isinstance(tree_matches, list)):
         tree_matches = [tree_matches]
@@ -48,7 +51,8 @@ def _evaluate(xml, xpath, namespaces=dict()):
 
         #Re-evaluate with the new source XML recursively,
         #to handle all higher line ranges
-        line_compressed_matches = _evaluate(line_compressed_xml, xpath)
+        line_compressed_matches = _evaluate(line_compressed_xml, xpath,
+                compiled_xpath=compiled_xpath)
 
         #Only take matches which we haven't already found, as the higher range
         #evaluations will have incorrect line numbers for matches in lower ranges

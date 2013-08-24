@@ -21,17 +21,17 @@ def from_lxml_exception(e):
     return out
 
 
-class XmlToolsError(Exception):
+class XmlBaseError(Exception):
     def __init__(self, e):
         self.inner = e
         self.message = e.message
 
-class XmlError(XmlToolsError):
+class XmlError(XmlBaseError):
     def __init__(self, e):
         self.inner = e
         self.message = "XML parse error: " + wrap_error_message(e.message)
 
-class XPathError(XmlToolsError):
+class XPathError(XmlBaseError):
     def __init__(self, e):
         self.inner = e
         self.message = "XPath error: " + wrap_error_message(e.message)

@@ -6,7 +6,7 @@ except ImportError:
     
 from vim_xpath import xpath as x
 from vim_xpath import namespace_prefix_guesser as g
-from vim_xpath.exceptions import XmlToolsError
+from vim_xpath.exceptions import XmlBaseError
 
 VARIABLE_SCOPE = "s:"
 
@@ -27,7 +27,7 @@ def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):
                 loc_list.add_result_entry(result)
         else:
             loc_list.add_error_entry('No results returned')
-    except XmlToolsError as e:
+    except XmlBaseError as e:
         loc_list.add_error_entry(e.message)
 
 def guess_prefixes(bufnr):
