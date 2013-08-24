@@ -7,6 +7,10 @@ import re
 import glob
 import subprocess
 
+SEGV_RETRIES = 10
+class VSpecSEGVException(Exception):
+    pass
+
 def run_python_tests():
     loader = nose.loader.TestLoader(workingDir='python')
     python_success = nose.run(testLoader=loader)
@@ -35,6 +39,9 @@ def run_vspec_tests():
             print e
             raise
 
+        for line in output.split('\n'):
+            if "SEGV" in line:
+                raise VSpecSEGVException("Eek.")
 
         passed, run = get_vspec_pass_fail(output)
         output = format_vspec_output(output)
@@ -80,8 +87,7 @@ def get_vspec_pass_fail(output):
     output_lines = output.split('\n')
     passed = len(filter(lambda x: x.startswith("ok "), output_lines))
     total = len(filter(lambda x: x.startswith("ok ") \
-            or x.startswith("not ok ") \
-            or "SEGV" in x, output_lines))
+            or x.startswith("not ok "), output_lines))
 
     return passed, total
 
@@ -93,7 +99,14 @@ if __name__ == '__main__':
     print
     print "Running vspec tests:"
     print 
-    vspec_success = run_vspec_tests()
+
+    vspec_success = False
+    for i in range(SEGV_RETRIES):
+        try:
+            vspec_success = run_vspec_tests()
+            break
+        except VSpecSEGVException as e:
+            print "SEGV error from vspec, retrying :/"
 
     print "-------------------------------"
 
