@@ -79,7 +79,9 @@ def format_vspec_output(output):
 def get_vspec_pass_fail(output):
     output_lines = output.split('\n')
     passed = len(filter(lambda x: x.startswith("ok "), output_lines))
-    total = len(filter(lambda x: x.startswith("ok ") or x.startswith("not ok "), output_lines))
+    total = len(filter(lambda x: x.startswith("ok ") \
+            or x.startswith("not ok ") \
+            or "SEGV" in x, output_lines))
 
     return passed, total
 
