@@ -11,7 +11,7 @@ from vim_xpath.exceptions import XmlToolsError
 VARIABLE_SCOPE = "s:"
 
 def get_buffer_string(bufnr):
-    buffer = vim.buffers[bufnr-1]
+    buffer = vim.buffers[bufnr]
     return "\n".join(buffer)
 
 def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):

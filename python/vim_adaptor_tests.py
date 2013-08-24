@@ -5,7 +5,7 @@ import vim_adaptor as a
 class VimModuleBufferStub(list):
 
     def __init__(self):
-        self.number = 0
+        self.number = 1
         
     def set_contents(self, contents_string):
         self[:] = contents_string.split("\n")
@@ -35,32 +35,32 @@ class VimModuleStub(object):
 class VimAdaptorTests(unittest.TestCase):
 
     def stub_vim_buffer(self, bufnr, buffer_contents):
-        a.vim.buffers[bufnr-1] = VimModuleBufferStub()
-        a.vim.buffers[bufnr-1].set_contents(buffer_contents)
+        a.vim.buffers[bufnr] = VimModuleBufferStub()
+        a.vim.buffers[bufnr].set_contents(buffer_contents)
 
     def setUp(self):
         a.vim = VimModuleStub()
         
     def test_buffer_mock(self):
         test_string = "test buffer contents"
-        self.stub_vim_buffer(0, test_string)
-        self.assertEqual("test buffer contents", a.get_buffer_string(0))
+        self.stub_vim_buffer(1, test_string)
+        self.assertEqual("test buffer contents", a.get_buffer_string(1))
 
     def test_xpath_evaluation(self):
         test_xml = "<Root>\n<Tag/>\n<Tag/>\n</Root>"
-        self.stub_vim_buffer(0, test_xml)
-        a.evaluate_xpath(0, 0, "//Tag")
+        self.stub_vim_buffer(1, test_xml)
+        a.evaluate_xpath(1, 0, "//Tag")
         self.assertEqual("setloclist(0, [], 'r')", VimModuleStub.evaluated[0])
         
         self.assertEqual("setloclist(0, [{" +
-                         "'bufnr': 0, " +
+                         "'bufnr': 1, " +
                          "'lnum': 2, " +
                          "'text': \"<Tag>\", " +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
         
         self.assertEqual("setloclist(0, [{" +
-                         "'bufnr': 0, " +
+                         "'bufnr': 1, " +
                          "'lnum': 3, " +
                          "'text': \"<Tag>\", " +
                          "}], 'a')",
@@ -68,12 +68,12 @@ class VimAdaptorTests(unittest.TestCase):
 
     def test_xpath_with_undefined_namespace_errors(self):
         test_xml = "<Root xmlns:ns='test.org'><ns:Tag/></Root>"
-        self.stub_vim_buffer(0, test_xml)
+        self.stub_vim_buffer(1, test_xml)
 
-        a.evaluate_xpath(0, 0, '//vimns:Tag')
+        a.evaluate_xpath(1, 0, '//vimns:Tag')
 
         self.assertEqual("setloclist(0, [{" +
-                         "'bufnr': 0, " +
+                         "'bufnr': 1, " +
                          "'type': 'E', " +
                          "'text': \"XPath evaluation error: " + 
                          "undefined namespace prefix\"" +
@@ -82,25 +82,25 @@ class VimAdaptorTests(unittest.TestCase):
 
     def test_xpath_which_doesnt_return_a_line_number(self):
         text_xml = "<Root><Tag/></Root>"
-        self.stub_vim_buffer(0, text_xml)
+        self.stub_vim_buffer(1, text_xml)
 
-        a.evaluate_xpath(0, 0, "'test string'")
+        a.evaluate_xpath(1, 0, "'test string'")
 
         self.assertEqual("setloclist(0, [{" +
-                         "'bufnr': 0, " +
+                         "'bufnr': 1, " +
                          "'text': \"string: test string\", " +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
 
     def test_empty_buffer(self):
-        self.stub_vim_buffer(0, "")
-        a.evaluate_xpath(0, 0, "//*")
+        self.stub_vim_buffer(1, "")
+        a.evaluate_xpath(1, 0, "//*")
 
     def test_guess_prefixes(self):
         test_xml = "<Root><ns:Tag xmlns:ns='http://testprefixes.org'/></Root>"
-        self.stub_vim_buffer(0, test_xml)
+        self.stub_vim_buffer(1, test_xml)
 
-        a.guess_prefixes(0)
+        a.guess_prefixes(1)
 
         self.assertEqual('let l:ns_prefixes = {' +
                         '"ns": "http://testprefixes.org",}',
@@ -108,9 +108,9 @@ class VimAdaptorTests(unittest.TestCase):
 
     def test_guess_prefixes_error(self):
         test_xml = "<Some><Malformed><Rubbish></Some>"
-        self.stub_vim_buffer(0, test_xml)
+        self.stub_vim_buffer(1, test_xml)
 
-        a.guess_prefixes(0)
+        a.guess_prefixes(1)
 
         self.assertIn(
                 'throw "An error occurred while guessing namespace prefixes:', 
@@ -119,19 +119,19 @@ class VimAdaptorTests(unittest.TestCase):
     def test_escaping_in_evaluation_result(self):
         test_xml = "<Root><Tag>With apo's in result</Tag>"
         test_xml += "<Tag>\"and some quotes\"</Tag></Root>"
-        self.stub_vim_buffer(0, test_xml)
+        self.stub_vim_buffer(1, test_xml)
 
-        a.evaluate_xpath(0, 0, "//Tag")
+        a.evaluate_xpath(1, 0, "//Tag")
 
         self.assertEqual("setloclist(0, [{" +
-                         "'bufnr': 0, " +
+                         "'bufnr': 1, " +
                          "'lnum': 1, " +
                          "'text': \"<Tag>: With apo's in result\", " +
                          "}], 'a')",
                          VimModuleStub.evaluated[1])
 
         self.assertEqual("setloclist(0, [{" +
-                         "'bufnr': 0, " +
+                         "'bufnr': 1, " +
                          "'lnum': 1, " +
                          "'text': \"<Tag>: \\\"and some quotes\\\"\", " +
                          "}], 'a')",
