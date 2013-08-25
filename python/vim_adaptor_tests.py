@@ -51,20 +51,27 @@ class VimAdaptorTests(unittest.TestCase):
         self.stub_vim_buffer(1, test_xml)
         a.evaluate_xpath(1, 0, "//Tag")
         self.assertEqual("setloclist(0, [], 'r')", VimModuleStub.evaluated[0])
+
+        self.assertEqual("setloclist(0, [{" +
+                         "'bufnr': 1, " +
+                         "'text': \"Results for: " + 
+                         "//Tag\"" +
+                         "}], 'a')",
+                         VimModuleStub.evaluated[1])
         
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 1, " +
                          "'lnum': 2, " +
                          "'text': \"<Tag>\", " +
                          "}], 'a')",
-                         VimModuleStub.evaluated[1])
+                         VimModuleStub.evaluated[2])
         
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 1, " +
                          "'lnum': 3, " +
                          "'text': \"<Tag>\", " +
                          "}], 'a')",
-                         VimModuleStub.evaluated[2])
+                         VimModuleStub.evaluated[3])
 
     def test_xpath_with_undefined_namespace_errors(self):
         test_xml = "<Root xmlns:ns='test.org'><ns:Tag/></Root>"
@@ -78,7 +85,7 @@ class VimAdaptorTests(unittest.TestCase):
                          "'text': \"XPath evaluation error: " + 
                          "undefined namespace prefix\"" +
                          "}], 'a')",
-                         VimModuleStub.evaluated[1])
+                         VimModuleStub.evaluated[2])
 
     def test_xpath_which_doesnt_return_a_line_number(self):
         text_xml = "<Root><Tag/></Root>"
@@ -90,7 +97,7 @@ class VimAdaptorTests(unittest.TestCase):
                          "'bufnr': 1, " +
                          "'text': \"string: test string\", " +
                          "}], 'a')",
-                         VimModuleStub.evaluated[1])
+                         VimModuleStub.evaluated[2])
 
     def test_empty_buffer(self):
         self.stub_vim_buffer(1, "")
@@ -128,11 +135,11 @@ class VimAdaptorTests(unittest.TestCase):
                          "'lnum': 1, " +
                          "'text': \"<Tag>: With apo's in result\", " +
                          "}], 'a')",
-                         VimModuleStub.evaluated[1])
+                         VimModuleStub.evaluated[2])
 
         self.assertEqual("setloclist(0, [{" +
                          "'bufnr': 1, " +
                          "'lnum': 1, " +
                          "'text': \"<Tag>: \\\"and some quotes\\\"\", " +
                          "}], 'a')",
-                         VimModuleStub.evaluated[2])
+                         VimModuleStub.evaluated[3])

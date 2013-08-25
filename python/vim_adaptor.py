@@ -17,6 +17,7 @@ def get_buffer_string(bufnr):
 def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):
     loc_list = VimLocListAdaptor(bufnr, winnr)
     loc_list.clear_current_list()
+    loc_list.add_text_entry("Results for: " + xpath)
     
     xml = get_buffer_string(bufnr)
 
@@ -73,6 +74,14 @@ class VimLocListAdaptor(object):
 
         vim.eval(("setloclist({0}, [{{{1}}}], 'a')"
                  ).format(self.winnr, bufnr_arg + lnum_arg + text_arg))
+
+    def add_text_entry(self, text):
+        escaped = text.replace('"', '\\"')
+        vim.eval(("setloclist({0}, [{{" +
+                  "'bufnr': {1}, " +
+                  "'text': \"{2}\"" +
+                  "}}], 'a')"
+                 ).format(self.winnr, self.bufnr, escaped))
 
     def add_error_entry(self, error_text):
         vim.eval(("setloclist({0}, [{{" +

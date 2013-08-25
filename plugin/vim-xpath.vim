@@ -76,6 +76,10 @@ function! XPathSetBufferPrefixes(ns_prefixes)
 endf
 
 function! XPathShowBufferPrefixes()
+    if !exists("b:ns_prefixes")
+        call XPathGuessPrefixes()
+    endif
+
     let l:ns_prefixes = s:XPathGetBufferPrefixes()
 
     let l:loclist = []
@@ -85,6 +89,8 @@ function! XPathShowBufferPrefixes()
     endfor
 
     call setloclist(winnr(), l:loclist)
+    lopen
+    wincmd w
 endf
 
 function! s:XPathGetBufferPrefixes()
@@ -156,11 +162,12 @@ endf
 "Called when the XPath is finished (by hitting return)
 function! XPathComplete(search_buffer, active_buffer, active_window)
     let l:xpath = s:XPathInSearchBuffer(a:search_buffer)
-    call s:XPathEvaluate(l:xpath, a:active_buffer, a:active_window)
+    call XPathEvaluate(l:xpath, a:active_buffer, a:active_window)
     let s:xpath_search_history += [l:xpath]
 
-    silent bwipe
-    silent lfirst
+    silent! bwipe
+    silent! lfirst
+    silent! lnext
 endf
 
 "Called when the contents of the search buffer changes at all
@@ -168,11 +175,11 @@ function! s:XPathChanged(search_buffer, active_buffer, active_window)
     let l:lines = getbufline(a:search_buffer, 1, "$")
     "Delete any lines apart from the first one
     if len(l:lines) > 1
-        silent 2,$d
+        silent! 2,$d
     endif
 
     let l:xpath = s:XPathInSearchBuffer(a:search_buffer)
-    call s:XPathEvaluate(l:xpath, a:active_buffer, a:active_window)
+    call XPathEvaluate(l:xpath, a:active_buffer, a:active_window)
 endf
 
 "Get the XPath out of a search buffer
@@ -181,7 +188,7 @@ function! s:XPathInSearchBuffer(search_buffer)
 endf
 
 "Evaluate an XPath via the python vim adaptor
-function! s:XPathEvaluate(xpath, active_buffer, active_window)
+function! XPathEvaluate(xpath, active_buffer, active_window)
     let l:ns_prefixes = getbufvar(a:active_buffer, "ns_prefixes")
     let l:xpath = escape(a:xpath, "'\\")
     execute "py vim_adaptor.evaluate_xpath(" .
