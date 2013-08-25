@@ -1,9 +1,12 @@
 # vim-xpath [![Build Status](https://api.travis-ci.org/actionshrimp/vim-xpath.png?branch=master)](http://travis-ci.org/actionshrimp/vim-xpath)
 
 A plugin to allow XPath search and evaluation on XML documents being edited in
-vim, using the python lxml library.
+vim, using the python lxml library. Open an XML document, run the
+:XPathSearchPrompt command, and type an XPath to see it evaluated before your
+very eyes. Results appear in the vim location list.
 
-For installation/usage instructions, see doc/xpath.txt
+Requires python, vim+python and the python lxml library to be installed. For
+full installation/usage instructions, see doc/xpath.txt (:help xpath.txt)
 
 This is a complete rewrite of the old version of the xpath plugin. 
 Features of the rewrite:
