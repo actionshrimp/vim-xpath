@@ -202,3 +202,5 @@ function! XPathHistoryPopup()
     call complete(1, reverse(s:xpath_search_history))
     return ''
 endf
+
+let g:skip_xpath = 1
