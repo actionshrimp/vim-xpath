@@ -43,12 +43,12 @@ class VimAdaptorTests(unittest.TestCase):
         
     def test_buffer_mock(self):
         test_string = "test buffer contents"
-        self.stub_vim_buffer(1, test_string)
+        self.stub_vim_buffer(0, test_string)
         self.assertEqual("test buffer contents", a.get_buffer_string(1))
 
     def test_xpath_evaluation(self):
         test_xml = "<Root>\n<Tag/>\n<Tag/>\n</Root>"
-        self.stub_vim_buffer(1, test_xml)
+        self.stub_vim_buffer(0, test_xml)
         a.evaluate_xpath(1, 0, "//Tag")
         self.assertEqual("setloclist(0, [], 'r')", VimModuleStub.evaluated[0])
 
@@ -75,7 +75,7 @@ class VimAdaptorTests(unittest.TestCase):
 
     def test_xpath_with_undefined_namespace_errors(self):
         test_xml = "<Root xmlns:ns='test.org'><ns:Tag/></Root>"
-        self.stub_vim_buffer(1, test_xml)
+        self.stub_vim_buffer(0, test_xml)
 
         a.evaluate_xpath(1, 0, '//vimns:Tag')
 
@@ -89,7 +89,7 @@ class VimAdaptorTests(unittest.TestCase):
 
     def test_xpath_which_doesnt_return_a_line_number(self):
         text_xml = "<Root><Tag/></Root>"
-        self.stub_vim_buffer(1, text_xml)
+        self.stub_vim_buffer(0, text_xml)
 
         a.evaluate_xpath(1, 0, "'test string'")
 
@@ -100,12 +100,12 @@ class VimAdaptorTests(unittest.TestCase):
                          VimModuleStub.evaluated[2])
 
     def test_empty_buffer(self):
-        self.stub_vim_buffer(1, "")
+        self.stub_vim_buffer(0, "")
         a.evaluate_xpath(1, 0, "//*")
 
     def test_guess_prefixes(self):
         test_xml = "<Root><ns:Tag xmlns:ns='http://testprefixes.org'/></Root>"
-        self.stub_vim_buffer(1, test_xml)
+        self.stub_vim_buffer(0, test_xml)
 
         a.guess_prefixes(1)
 
@@ -115,7 +115,7 @@ class VimAdaptorTests(unittest.TestCase):
 
     def test_guess_prefixes_error(self):
         test_xml = "<Some><Malformed><Rubbish></Some>"
-        self.stub_vim_buffer(1, test_xml)
+        self.stub_vim_buffer(0, test_xml)
 
         a.guess_prefixes(1)
 
@@ -126,7 +126,7 @@ class VimAdaptorTests(unittest.TestCase):
     def test_escaping_in_evaluation_result(self):
         test_xml = "<Root><Tag>With apo's in result</Tag>"
         test_xml += "<Tag>\"and some quotes\"</Tag></Root>"
-        self.stub_vim_buffer(1, test_xml)
+        self.stub_vim_buffer(0, test_xml)
 
         a.evaluate_xpath(1, 0, "//Tag")
 

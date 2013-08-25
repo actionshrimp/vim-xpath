@@ -11,7 +11,15 @@ from vim_xpath.exceptions import XPathError
 VARIABLE_SCOPE = "s:"
 
 def get_buffer_string(bufnr):
-    buffer = vim.buffers[bufnr]
+    offset = -1
+
+    #0-indexed buffers object became 1-indexed in vim74
+    try:
+        vim.buffers[0]
+    except ValueError:
+        offset = 0
+
+    buffer = vim.buffers[bufnr + offset]
     return "\n".join(buffer)
 
 def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):
