@@ -66,7 +66,7 @@ function! XPathSetBufferPrefixes(ns_prefixes)
         let b:ns_prefixes = copy(g:ns_prefixes)
         for prefix in keys(a:ns_prefixes)
             "Global prefixes always 'win'
-            if !has_prefix(b:ns_prefixes, prefix)
+            if !has_key(b:ns_prefixes, prefix)
                 let b:ns_prefixes[prefix] = a:ns_prefixes[prefix]
             else
                 let b:ns_prefixes[prefix . "_buf"] = a:ns_prefixes[prefix]
