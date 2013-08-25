@@ -2,55 +2,150 @@
 
 This plugin adds XPath search functionality to Vim. 
 
-|xpath-installation|	Installing the plugin
-|xpath-usage|		Using the plugin
-|xpath-configure|	Plugin configuration options
+|xpath-changes|         Changes from the last version of vim-xpath
+|xpath-installation|    Installing the plugin, and plugin system requirements
+|xpath-usage|           Using the plugin
+|xpath-configure|       Plugin configuration options
 
-==============================================================================
-INSTALLATION						*xpath-installation*
+===============================================================================
+CHANGES                                                         *xpath-changes*
+
+This is a complete rewrite of v1. The plugin now:
+
+- Uses vim's built in |location-list| to display results, rather than
+  implementing its own.
+- Properly supports XML namespaces through prefix detection / configuration,
+  rather than just hacking things with XPath's local-name().
+- Supports line numbers in the results on XML files larger than 65536 lines
+  long. This is a bug in the underlying XML library, that is worked around in a
+  reliable way.
+- No longer supports auto-completion of xpaths. This isn't really supported by
+  the underlying XML library, and was previously a bit of a hack. It might be
+  re-added again at some point in the future.
+
+===============================================================================
+INSTALLATION                                               *xpath-installation*
 
 To install the plugin, extract the directory structure into your vimfiles, or 
-use the excellent Pathogen plugin.
+use your preferred plugin manager (vundle, pathogen etc.)
 
-For the plugin to run, you'll need python support enabled. You can check this
-with |:version|, and looking for +python.
+For the plugin to run, you'll need python installed, and your vim distribution
+needs to have been built with python support enabled. You can check this with
+|:version|, and looking for |+python| (|+python3| may work, but is untested).
 
-You'll also need python-lxml installed (ideally 2.7 or higher).
+You'll also need python-lxml installed (http://lxml.de).  This should be
+installed by default on OSX (although the version may be fairly old?), and can
+be installed on ubuntu with apt-get install python-lxml.
 
-Without these the plugin will let you know on startup, then stop loading.
+If any of these requirements are unmet the plugin will let you know on startup,
+then stop loading.
 
-==============================================================================
-USAGE							*xpath-usage*
+===============================================================================
+USAGE                                                             *xpath-usage*
 
 XPath search defines several functions, but the main interface to the plugin 
-is through the XPathSearchPrompt command, which launches the search input 
-prompt. 
+is through the :XPathSearchPrompt command, which launches the search input 
+prompt against the current buffer (which needs to contain valid XML).
 
-You may want to map the command to a key - this will map F5 to call the command:
+You may want to map the command to a key if it's something you use a lot - this
+will map F5 to the command:
 
 noremap <F5> XPathSearchPrompt
 
-The search prompt appears, and supports context-sensitive tab completion. By
-default hitting tab will autocomplete a tag that would be available in the
-current XPath context. To tab complete attributes in the current context, type 
-an @ sign at the beginning of the current context (e.g. //Parent/Child/@<Tab> 
-will complete all attributes for Child).
+After the command has been invoked, the search prompt appears and you can begin
+typing an XPath. The location list will also appear to display results. Results
+will appear for matches as you type an XPath.
 
-When you do a search, the cursor will jump to the first result in the results
-window. If the result has a line number, you can also press <Enter> on the
-highlighted result, and the cursor will jump to the line in your XML file
-that matched the search.
+If you're done typing, hit enter to complete the search, and if the XPath
+expression evaluates to a node or node-set, the buffer being searched against
+will jump to the first match. You can jump between matches using the location
+list commands such as |:lnext| and |:lprev|. (I recommend tpope's
+unimpaired.vim plugin for a great set of mappings for commands like these -
+with it installed, ]l and [l will be mapped to |:lnext| and |:lprev|
+respectively which make navigating the list very easy. Get the plugin at
+https://github.com/tpope/vim-unimpaired).
 
 If the XML file is not valid, the plugin will let you know of any XML 
-validation errors. Again if there is a line number associated with the error
-you can hit <Enter> to jump there.
+validation errors. 
 
-Pressing q in normal mode on the results window will cause it to close again.
+When you hit enter to complete a search, the XPath will be added to a search
+history. Use CTRL+h in the prompt to open a history popup of previous search
+results.
 
-==============================================================================
-CONFIGURATION						*xpath-configure*
+Namespaces
+----------
 
-To disable the plugin for certain situtations, add the following in your
-.vimrc:
+If your document contains elements which are declared as being in a particular
+namespace (either through a default namespace, declared with "xmlns", or more
+explicitly through the use of a prefix, decalred with "xmlns:prefixName"), the
+XPath evaluator requires that you have a prefix defined for the namespace URL in
+question. Note that namespace prefixes defined in the document being searched
+are distinct from those in the XPaths being evaluated.
 
-let g:loaded_xpath = 1
+The plugin supports some very simplistic prefix detection - the document is
+scanned and "xmlns" and "xmlns:prefixName" attributes are loaded into a
+buffer-specific prefix dictionary. All namespaces require a prefix in xpath
+(there is no support for a default namespace apart from the unqualified
+namespace), so the first unprefixed "xmlns" is assigned the prefix 'default'.
+You can view the prefix dictionary that has been auto-detected through the
+:XPathShowPrefixes command, and you can edit it by changing the buffer-specific
+b:ns_prefixes variable with:
+
+let b:ns_prefixes["my_prefix"] = "http://someurl.org"
+
+As an example, for this XML:
+
+<Root xmlns:ns="http://prefixed.org">
+    <NamespaceFreeTag/>
+    <DefaultNamespacedBlock xmlns="http://default.org">
+        <DefaultNamespaced/>
+    </DefaultNamespacedBlock>
+    <ns:Prefixed/>
+</Root>
+
+The following XPaths should match a tag using the prefix detection's
+conventions:
+
+1.  //NamespaceFreeTag 
+
+as it is in the unqualified, 'blank' namespace.
+
+2.  //default:DefaultNamespaced 
+
+as the detection gives the first 'default' xmlns attribute namespace in the
+document the 'default' prefix.
+
+3.  //ns:Prefixed
+
+as the detection gives the first xmlns:prefixName attribute that defines a
+prefix the specified prefix.
+
+If there were multiple conflicting definitions for the "ns" prefix, and default
+namespace, these would have to be resolved manually by editing the b:ns_prefixes
+variable.
+
+You can also set commonly used, global prefixes shared between all buffers by
+setting the g:ns_prefixes dictionary in a similar way, perhaps in your vimrc.
+For example:
+
+let g:ns_prefixes { "xsl": "http://www.w3.org/1999/XSL/Transform" }
+
+Global prefixes will be merged into the buffer-specific prefix list during
+prefix detection.
+
+===============================================================================
+CONFIGURATION                                                 *xpath-configure*
+
+To disable the plugin for certain situtations, (e.g. to hide the startup
+messages if you don't have certain required dependencies installed) add the
+following in your |vimrc|:
+
+let g:skip_xpath = 1
+
+Common namespaces can be configured globally by defining a g:ns_prefixes
+variable:
+
+let g:ns_prefixes { "xsl": "http://www.w3.org/1999/XSL/Transform" }
+
+These prefixes can then always be used in your XPaths to refer to tags in a
+common namespace.
