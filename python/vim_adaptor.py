@@ -32,7 +32,7 @@ def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):
         if isinstance(e, XPathError) and xpath in ["", "//"]:
             loc_list.add_error_entry('No results returned')
         else:
-            loc_list.add_error_entry(e.message)
+            loc_list.add_error_entry(e.msg)
 
 def guess_prefixes(bufnr):
     try:
@@ -47,7 +47,7 @@ def guess_prefixes(bufnr):
 
         vim.command(outstr)
     except Exception as e:
-        vim.command('throw "{0}"'.format(e.message))
+        vim.command('throw "{0}"'.format(e.msg))
 
 class VimLocListAdaptor(object):
 
