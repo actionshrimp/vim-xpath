@@ -31,7 +31,7 @@ use your preferred plugin manager (vundle, pathogen etc.)
 
 For the plugin to run, you'll need python installed, and your vim distribution
 needs to have been built with python support enabled. You can check this with
-|:version|, and looking for |+python| (+python3 may work, but is untested).
+|:version|, and looking for |+python| (|+python3| may work, but is untested).
 
 You'll also need python-lxml installed (http://lxml.de).  This should be
 installed by default on OSX (although the version may be fairly old?), and can
@@ -59,10 +59,11 @@ will appear for matches as you type an XPath.
 If you're done typing, hit enter to complete the search, and if the XPath
 expression evaluates to a node or node-set, the buffer being searched against
 will jump to the first match. You can jump between matches using the location
-list commands such as :lnext and :lprev. (I recommend tpope's unimpaired.vim
-plugin for a great set of mappings for commands like these - with it installed,
-]l and [l will be mapped to :lnext and :lprev respectively which make navigating
-the list very easy. Get the plugin at https://github.com/tpope/vim-unimpaired).
+list commands such as |:lnext| and |:lprev|. (I recommend tpope's
+unimpaired.vim plugin for a great set of mappings for commands like these -
+with it installed, ]l and [l will be mapped to |:lnext| and |:lprev|
+respectively which make navigating the list very easy. Get the plugin at
+https://github.com/tpope/vim-unimpaired).
 
 If the XML file is not valid, the plugin will let you know of any XML 
 validation errors. 
@@ -137,7 +138,7 @@ CONFIGURATION                                                 *xpath-configure*
 
 To disable the plugin for certain situtations, (e.g. to hide the startup
 messages if you don't have certain required dependencies installed) add the
-following in your .vimrc:
+following in your |vimrc|:
 
 let g:skip_xpath = 1
 
