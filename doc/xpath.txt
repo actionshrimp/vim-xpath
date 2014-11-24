@@ -41,7 +41,7 @@ If any of these requirements are unmet the plugin will let you know on startup,
 then stop loading.
 
 ===============================================================================
-USAGE                                                             *xpath-usage*
+USAGE                                            *:XPathSearchPrompt* *xpath-usage*
 
 XPath search defines several functions, but the main interface to the plugin 
 is through the :XPathSearchPrompt command, which launches the search input 
@@ -88,7 +88,7 @@ buffer-specific prefix dictionary. All namespaces require a prefix in xpath
 (there is no support for a default namespace apart from the unqualified
 namespace), so the first unprefixed "xmlns" is assigned the prefix 'default'.
 You can view the prefix dictionary that has been auto-detected through the
-:XPathShowPrefixes command, and you can edit it by changing the buffer-specific
+*:XPathShowPrefixes* command, and you can edit it by changing the buffer-specific
 b:ns_prefixes variable with:
 
 let b:ns_prefixes["my_prefix"] = "http://someurl.org"
