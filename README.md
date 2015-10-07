@@ -1,4 +1,4 @@
-# vim-xpath [![Build Status](https://api.travis-ci.org/actionshrimp/vim-xpath.png?branch=master)](http://travis-ci.org/actionshrimp/vim-xpath)
+# vim-xpath
 
 A plugin to allow XPath search and evaluation on XML documents being edited in
 vim, using the python lxml library. Open an XML document, run the
