@@ -5,10 +5,13 @@ endif
 
 "Check python is installed
 if !has("python")
-    echo 'vim-xpath requires vim to be compiled with python support, and '
-                \ . 'python to be installed. To stop this message from '
-                \ . 'appearing, either install python, uninstall this plugin '
-                \ . 'or add the line "let g:skip_xpath = 1" to your vimrc.'
+    if !exists("g:quiet_xpath")
+        echo 'vim-xpath requires vim to be compiled with python support, and '
+                    \ . 'python to be installed. To stop this message from '
+                    \ . 'appearing, either install python, uninstall this plugin '
+                    \ . 'or add the line "let g:skip_xpath = 1" to your vimrc.'
+    endif
+
     finish
 endif
 
@@ -24,10 +27,13 @@ except ImportError:
 EOF
 
 if s:no_lxml
-    echo 'vim-xpath requires the lxml python library (http://lxml.de) to be '
-                \ . 'installed. To stop this message from appearing, either '
-                \ . 'install lxml, uninstall this plugin or add the line '
-                \ . '"let g:skip_xpath = 1" to your vimrc.'
+    if !exists("g:quiet_xpath")
+        echo 'vim-xpath requires the lxml python library (http://lxml.de) to be '
+                    \ . 'installed. To stop this message from appearing, either '
+                    \ . 'install lxml, uninstall this plugin or add the line '
+                    \ . '"let g:skip_xpath = 1" to your vimrc.'
+    endif
+
     finish
 endif
 

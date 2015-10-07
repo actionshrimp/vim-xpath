@@ -142,6 +142,12 @@ following in your |vimrc|:
 
 let g:skip_xpath = 1
 
+To make vim-xpath quiet during the python and lxml detection, (e.g. to hide
+the startup messages in case of autodetction failure) add the following in
+your |vimrc|:
+
+let g:quiet_xpath = 1
+
 Common namespaces can be configured globally by defining a g:ns_prefixes
 variable:
 
