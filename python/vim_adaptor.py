@@ -39,8 +39,10 @@ def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):
     except Exception as e:
         if isinstance(e, XPathError) and xpath in ["", "//"]:
             loc_list.add_error_entry('No results returned')
-        else:
+        elif hasattr(e, "msg"):
             loc_list.add_error_entry(e.msg)
+        else:
+            loc_list.add_error_entry("ERROR: " + repr(e))
 
 def guess_prefixes(bufnr):
     try:
