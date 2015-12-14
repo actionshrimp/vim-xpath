@@ -137,7 +137,7 @@ def _output_value(match):
     else:
         value_text = match
 
-    return value_text
+    return value_text.encode('utf-8')
 
 def _prefixed_name_from_absolute_name(name, namespaces):
     """Convert an lxml {namespaceuri}Name to prefix:Name,
