@@ -41,13 +41,20 @@ endif
 let s:curfile = expand("<sfile>")
 let s:curfiledir = fnamemodify(s:curfile, ":h")
 
-let s:pyfile = fnameescape(s:curfiledir . "/../python/main.py")
-
 let s:xpath_search_history = []
 
+" 24.02.16 sfx2k
+" Fix #12: join path-elements with python
+py << EOF
+import vim
+import os
+
+main_file = os.path.join(os.path.split(vim.eval('s:curfiledir'))[0], 'python', 'main.py')
+sys.argv = [main_file]
+vim.command("let s:pyfile='" + main_file + "'")
+EOF
+
 "Pass script location into script itself as an argument
-py import sys
-execute "py sys.argv = ['" . s:pyfile . "']"
 execute "pyfile " . s:pyfile
 
 function! xpath#XPathGuessPrefixes()
