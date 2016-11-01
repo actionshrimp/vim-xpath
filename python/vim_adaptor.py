@@ -18,6 +18,8 @@ def get_buffer_string(bufnr):
         vim.buffers[0]
     except ValueError:
         offset = 0
+    except KeyError:
+        offset = 0
 
     buffer = vim.buffers[bufnr + offset]
     return "\n".join(buffer)
