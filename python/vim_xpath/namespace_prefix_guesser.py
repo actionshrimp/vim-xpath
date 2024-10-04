@@ -26,7 +26,7 @@ def _guess_prefixes(xml):
     for el in tree.iter():
         node_prefixes = el.nsmap
         if node_prefixes is not None:
-            for prefix in node_prefixes.keys():
+            for prefix in list(node_prefixes.keys()):
                 url = node_prefixes[prefix]
 
                 if prefix is None:
