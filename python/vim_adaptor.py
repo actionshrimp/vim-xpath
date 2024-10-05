@@ -3,7 +3,7 @@ try:
     import vim
 except ImportError:
     vim = None
-    
+
 from vim_xpath import xpath as x
 from vim_xpath import namespace_prefix_guesser as g
 from vim_xpath.exceptions import XPathError
@@ -28,13 +28,14 @@ def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):
     loc_list = VimLocListAdaptor(bufnr, winnr)
     loc_list.clear_current_list()
     loc_list.add_text_entry("Results for: " + xpath)
-    
-    xml = get_buffer_string(bufnr)
+
+    xml = get_buffer_string(bufnr).encode()
 
     try:
         results = x.evaluate(xml, xpath, ns_prefixes)
         if len(results) > 0:
             for result in results:
+                result["value"] = result["value"].decode("utf-8")
                 loc_list.add_result_entry(result)
         else:
             loc_list.add_error_entry('No results returned')
@@ -48,7 +49,7 @@ def evaluate_xpath(bufnr, winnr, xpath, ns_prefixes={}):
 
 def guess_prefixes(bufnr):
     try:
-        xml = get_buffer_string(bufnr)
+        xml = get_buffer_string(bufnr).encode()
         prefixes = g.guess_prefixes(xml)
 
         outstr = "let l:ns_prefixes = {"

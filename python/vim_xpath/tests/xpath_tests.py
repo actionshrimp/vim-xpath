@@ -1,6 +1,6 @@
 import unittest
 
-from helpers.file_helpers import read_sample_xml
+from .helpers.file_helpers import read_sample_xml
 
 from vim_xpath import xpath
 from vim_xpath.exceptions import XPathError, BufferXmlError

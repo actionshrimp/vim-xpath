@@ -4,7 +4,7 @@ if exists("g:skip_xpath")
 endif
 
 "Check python is installed
-if !has("python")
+if !has("python3")
     if !exists("g:quiet_xpath")
         echo 'vim-xpath requires vim to be compiled with python support, and '
                     \ . 'python to be installed. To stop this message from '
@@ -18,7 +18,7 @@ endif
 "Check python lxml library is installed
 let s:no_lxml = 0
 
-py << EOF
+py3 << EOF
 import vim
 try:
     import lxml
@@ -45,7 +45,7 @@ let s:xpath_search_history = []
 
 " 24.02.16 sfx2k
 " Fix #12: join path-elements with python
-py << EOF
+py3 << EOF
 import vim
 import os
 
@@ -55,14 +55,14 @@ vim.command("let s:pyfile='" + main_file + "'")
 EOF
 
 "Pass script location into script itself as an argument
-execute "pyfile " . s:pyfile
+execute "py3file " . s:pyfile
 
 function! xpath#XPathGuessPrefixes()
     let l:active_window = winnr()
     let l:active_buffer = winbufnr(l:active_window)
 
     try
-        execute "py vim_adaptor.guess_prefixes(" . l:active_buffer . ")"
+        execute "py3 vim_adaptor.guess_prefixes(" . l:active_buffer . ")"
         call XPathSetBufferPrefixes(l:ns_prefixes)
     catch
     endtry
@@ -200,7 +200,7 @@ endf
 function! XPathEvaluate(xpath, active_buffer, active_window)
     let l:ns_prefixes = getbufvar(a:active_buffer, "ns_prefixes")
     let l:xpath = escape(a:xpath, "'\\")
-    execute "py vim_adaptor.evaluate_xpath(" .
+    execute "py3 vim_adaptor.evaluate_xpath(" .
         \ a:active_buffer . ", " .
         \ a:active_window . ", " .
         \ "'" . l:xpath . "', " .

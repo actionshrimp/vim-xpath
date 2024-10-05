@@ -147,7 +147,7 @@ def _prefixed_name_from_absolute_name(name, namespaces):
         uri = regex_match.group(1)
         uri_with_braces = regex_match.group(0)
 
-        prefix = [k for k, v in namespaces.items() if v == uri][0]
+        prefix = [k for k, v in list(namespaces.items()) if v == uri][0]
         prefixed = name.replace(uri_with_braces, "{0}:".format(prefix))
 
         return prefixed
